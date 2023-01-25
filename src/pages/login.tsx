@@ -1,14 +1,15 @@
-import { MAGIC_PUBLIC_KEY } from '@/env';
 import { Magic } from 'magic-sdk'
-import dynamic from 'next/dynamic';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic'
+import { FormEvent, useEffect, useRef, useState } from 'react'
+
+import { MAGIC_PUBLIC_KEY } from '@/env'
 
 function Login() {
   const magic = useRef(new Magic(MAGIC_PUBLIC_KEY))
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>()
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const isLoggedIn = await magic.current.user.isLoggedIn()
       setIsLoggedIn(isLoggedIn)
     })()
