@@ -170,7 +170,7 @@ function SendForm() {
     }
   }
 
-  const handleSend = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSend = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
     if (!userData) {
       throw new Error('Not authenticated, please log in first')
