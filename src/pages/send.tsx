@@ -140,7 +140,7 @@ function SendForm() {
         <InputWrapper>
           <Label.Root htmlFor="youSendValue">You send</Label.Root>
           <FlexRow>
-            <StyledInput name="youSendValue" placeholder="$1000" pattern="[0-9]*" type="text" inputmode="numeric" />
+            <StyledInput name="youSendValue" placeholder="$1000" pattern="[0-9]*" type="text" inputMode="numeric" />
             <FlexRow>
               <Image src="/USD.png" alt="13" width={20} height={20} priority />
               USD
@@ -156,7 +156,7 @@ function SendForm() {
               placeholder="€920.26"
               pattern="[0-9]*"
               type="text"
-              inputmode="numeric"
+              inputMode="numeric"
             />
             <FlexRow>
               {' '}
