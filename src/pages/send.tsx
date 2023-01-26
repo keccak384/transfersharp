@@ -4,21 +4,29 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
+import {
+  Button,
+  Input,
+  InputWrapper,
+  InviteButton,
+  PageWrapper,
+  PendingButton,
+  SmallText,
+  StyledSendForm,
+} from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
-function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => void; disabled?: boolean }) {
+function LoginButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
-  const ButtonComponent = disabled ? PendingButton : Button
 
   return isLoggedIn ? (
-    <ButtonComponent>Notify via SMS</ButtonComponent>
+    <PendingButton>Send</PendingButton>
   ) : (
-    <ButtonComponent
+    <Button
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -26,7 +34,7 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
       }}
     >
       Sign in to send
-    </ButtonComponent>
+    </Button>
   )
 }
 
@@ -64,23 +72,32 @@ function SendForm() {
     setPhoneNumber(e.currentTarget.value)
   }
 
+  // @todo better validation
+  const isValidPhoneNumber = phoneNumber.length !== 0
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
         <SwapForm />
-        <InputWrapper>
-          <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-          <Input
-            onChange={onPhoneNumberChange}
-            value={phoneNumber}
-            type="tel"
-            name="toPhoneNumber"
-            placeholder="+1 800 888 8888"
-          />
-        </InputWrapper>
+        {userData && (
+          <InputWrapper>
+            <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+            <Input
+              onChange={onPhoneNumberChange}
+              value={phoneNumber}
+              type="tel"
+              name="toPhoneNumber"
+              placeholder="+1 800 888 8888"
+            />
+            <SmallText>
+              {`You can send to any phone number. We'll text them an invite to join to receive the funds.`}
+            </SmallText>
+            {isValidPhoneNumber && <InviteButton>Invite via SMS</InviteButton>}
+          </InputWrapper>
+        )}
         <TransactionDetails />
         <Suspense fallback={<Button disabled>...</Button>}>
-          <SubmitButton disabled={phoneNumber.length === 0} handleLogin={() => setIsLoginModalOpen(true)} />
+          <LoginButton handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
       </StyledSendForm>
     </PageWrapper>

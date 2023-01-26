@@ -2,7 +2,7 @@ import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import {
   Button,
@@ -85,7 +85,8 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
                 <PendingText>Waiting for them to join</PendingText>
               </FlexRowFixed>
               <InvitePendingMessage>
-                We will text you when the recipient joins to complete your transfer! You can safely leave this page.
+                Great! We texted them. When the recipient signs up you can complete your transfer! You can safely leave
+                this page.
               </InvitePendingMessage>
             </>
           )}
