@@ -103,39 +103,12 @@ const DialogContent = styled(Dialog.Content, {
   gap: '24px',
 })
 
-const DialogForm = styled('form', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-})
-
 function SendForm() {
-  const magic = useAtomValue(stateAtom)
   const userData = useAtomValue(userDataAtom)
   const refreshState = useResetAtom(stateAtom)
   const router = useRouter()
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    try {
-      const phoneNumber = new FormData(e.currentTarget).get('fromPhoneNumber')?.toString()
-
-      if (!phoneNumber) {
-        throw new Error('Phone is required')
-      }
-
-      await magic.auth.loginWithSMS({ phoneNumber })
-
-      refreshState()
-    } catch (error) {
-      console.log(`Error while logging in with MagicLink: ${error}`)
-    } finally {
-      setIsLoginModalOpen(false)
-    }
-  }
 
   const handleSend = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -248,7 +221,7 @@ function SendForm() {
         <ConnectWithPhoneDialog
           isOpen={isLoginModalOpen}
           setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-          handleLogin={handleLogin}
+          onConnected={refreshState}
         />
       </StyledSendForm>
     </PageWrapper>

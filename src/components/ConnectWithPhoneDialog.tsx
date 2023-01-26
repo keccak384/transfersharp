@@ -1,6 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import React from 'react'
+import { useAtomValue } from 'jotai'
+import React, { FormEvent } from 'react'
 import { styled } from 'stitches.config'
+
+import { stateAtom } from '@/data/wallet'
 
 import { SendButton, StyledInput } from './primitives'
 
@@ -37,12 +40,35 @@ const DialogForm = styled('form', {
 export default function ConnectWithPhoneDialog({
   isOpen,
   setIsOpen,
-  handleLogin,
+  onConnected,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
-  handleLogin: (event: React.FormEvent<HTMLFormElement>) => void
+  onConnected: (phoneNumber: string) => void
 }) {
+  const magic = useAtomValue(stateAtom)
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    try {
+      const phoneNumber = new FormData(e.currentTarget).get('fromPhoneNumber')?.toString()
+
+      if (!phoneNumber) {
+        throw new Error('Phone is required')
+      }
+
+      await magic.auth.loginWithSMS({ phoneNumber })
+
+      onConnected(phoneNumber)
+    } catch (error) {
+      console.log(`Error while logging in with MagicLink: ${error}`)
+    } finally {
+      setIsOpen(false)
+    }
+  }
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Portal>
