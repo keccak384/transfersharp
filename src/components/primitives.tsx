@@ -1,3 +1,4 @@
+import { keyframes } from '@stitches/react'
 import { styled } from 'stitches.config'
 
 export const Button = styled('button', {
@@ -24,6 +25,7 @@ export const Button = styled('button', {
 export const PendingButton = styled(Button, {
   opacity: 0.4,
   pointerEvents: 'none',
+})
 
 export const InviteButton = styled(Button, {
   backgroundColor: '$blue10',
@@ -49,4 +51,44 @@ export const Input = styled('input', {
   '&:focus': {
     outline: 'none',
   },
+})
+
+export const FlexRow = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-end',
+  gap: '$2',
+})
+
+export const FlexRowFixed = styled(FlexRow, {
+  justifyContent: 'flex-start',
+})
+
+export const DarkText = styled('span', { color: '$gray12' })
+
+export const InputWrapper = styled('div', {
+  padding: '24px',
+  border: '1px solid $gray5',
+  borderRadius: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$2',
+  color: '$gray12',
+})
+
+const spin = keyframes({
+  '0%': { transform: 'rotate(0deg)' },
+  '100%': { transform: 'rotate(360deg)' },
+})
+
+export const Spinner = styled('span', {
+  width: '16px',
+  height: '16px',
+  border: '2px solid $blue9',
+  borderBottom: '2px solid #fff',
+  borderRadius: '50%',
+  display: 'inline-block',
+  boxSizing: 'border-box',
+  animation: `${spin} 1000ms ease-in-out infinite`,
 })
