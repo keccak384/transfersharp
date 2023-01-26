@@ -6,22 +6,24 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
+import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
 const SendButton = styled('button', {
-  backgroundColor: '$blue9',
+  backgroundColor: '$gray12',
   color: '$gray1',
   border: 'none',
-  padding: '$2',
-  borderRadius: '20px',
+  padding: '16px',
+  borderRadius: '40px',
   textAlign: 'center',
   fontSize: '20px',
   fontWeight: '500',
   display: 'inline-block',
   cursor: 'pointer',
+  width: '100%',
   '&:hover': {
     backgroundColor: '$blue5',
   },
@@ -34,7 +36,7 @@ function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
     <SendButton>Send</SendButton>
   ) : (
     <SendButton as="a" href="#" onClick={handleLogin}>
-      Login to send
+      Sign in to send
     </SendButton>
   )
 }
@@ -65,6 +67,7 @@ const InputWrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   gap: '$2',
+  color: '$gray12',
 })
 
 const StyledInput = styled('input', {
@@ -75,7 +78,7 @@ const StyledInput = styled('input', {
   border: 'none',
   fontSize: '42px',
   appearance: 'none',
-  color: '$gray11',
+  color: '$gray12',
   width: '100%',
   '&::placeholder': {
     color: '$gray5',
@@ -83,6 +86,12 @@ const StyledInput = styled('input', {
   '&:focus': {
     outline: 'none',
   },
+})
+
+const CurrencySymbolWrapper = styled('div', {
+  fontSize: '42px',
+
+  color: '$gray12',
 })
 
 const TransactionDetails = styled('div', {
@@ -106,6 +115,7 @@ const DarkText = styled('span', { color: '$gray11' })
 const DialogOverlay = styled(Dialog.Overlay, {
   position: 'fixed',
   inset: '0',
+  backgroundColor: '#00000040',
   animation: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
 })
 
@@ -118,8 +128,18 @@ const DialogContent = styled(Dialog.Content, {
   maxWidth: '450px',
   maxHeight: '85vh',
   backgroundColor: 'white',
+  borderRadius: '20px',
   animation: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
   padding: '25px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+})
+
+const DialogForm = styled('form', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
 })
 
 function SendForm() {
@@ -174,13 +194,37 @@ function SendForm() {
     router.push(`/send/${data.id}`)
   }
 
+  const [inputValue, setInputValue] = useState(1000)
+  const [outputValue, setOutputValue] = useState(1000)
+  const [rate] = useState(0.92)
+  const onInputChange = (e: FormEvent<HTMLInputElement>) => {
+    const newPrice = (e.target.value * rate).toFixed(2)
+    setOutputValue(parseInt(newPrice))
+    setInputValue(e.target.value)
+  }
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    const newPrice = (inputValue * rate).toFixed(2)
+    setOutputValue(parseInt(newPrice))
+  }, [inputValue, rate])
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
         <InputWrapper>
           <Label.Root htmlFor="youSendValue">You send</Label.Root>
           <FlexRow>
-            <StyledInput name="youSendValue" placeholder="$1000" pattern="[0-9]*" type="text" inputMode="numeric" />
+            <CurrencySymbolWrapper>$</CurrencySymbolWrapper>
+            <StyledInput
+              name="youSendValue"
+              placeholder="1000"
+              pattern="[0-9]*"
+              type="number"
+              inputMode="numeric"
+              onChange={onInputChange}
+              value={inputValue}
+            />
             <FlexRow>
               <Image src="/USD.png" alt="13" width={20} height={20} priority />
               USD
@@ -190,12 +234,14 @@ function SendForm() {
         <InputWrapper>
           <Label.Root htmlFor="youSendValue">They receive</Label.Root>
           <FlexRow>
+            <CurrencySymbolWrapper>€</CurrencySymbolWrapper>
             <StyledInput
               name="youReceiveValue"
               placeholder="€920.26"
               pattern="[0-9]*"
-              type="text"
+              type="number"
               inputMode="numeric"
+              value={outputValue}
             />
             <FlexRow>
               {' '}
@@ -204,10 +250,12 @@ function SendForm() {
             </FlexRow>
           </FlexRow>
         </InputWrapper>
-        <InputWrapper>
-          <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-          <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
-        </InputWrapper>
+        {userData ? (
+          <InputWrapper>
+            <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+            <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+          </InputWrapper>
+        ) : null}
         <TransactionDetails>
           <FlexRow>
             <span>Current rate</span>
@@ -238,10 +286,10 @@ function SendForm() {
                 Enter your <span>phone number</span> to get started
               </h2>
               <p>It has a public address and a nickname that is only visible to you.</p>
-              <form onSubmit={handleLogin}>
-                <input name="fromPhoneNumber" type="tel" placeholder="+1 800 888 8888" required />
+              <DialogForm onSubmit={handleLogin}>
+                <StyledInput name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
                 <SendButton>Login</SendButton>
-              </form>
+              </DialogForm>
             </DialogContent>
           </Dialog.Portal>
         </Dialog.Root>

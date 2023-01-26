@@ -39,13 +39,16 @@ const GlobalStyles = globalCss({
     maxWidth: '100vw',
     overflowX: 'hidden',
     background: '$background',
-    color: '$gray11',
+    color: '$gray12',
     fontSize: '$2',
     fontFamily: '$system',
   },
   a: {
     color: 'inherit',
     textDecoration: 'none',
+  },
+  h2: {
+    fontWeight: 500,
   },
 })
 
