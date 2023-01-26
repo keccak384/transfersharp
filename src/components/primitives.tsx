@@ -21,6 +21,10 @@ export const Button = styled('button', {
   },
 })
 
+export const PendingButton = styled(Button, {
+  opacity: 0.4,
+  pointerEvents: 'none',
+
 export const InviteButton = styled(Button, {
   backgroundColor: '$blue10',
 })

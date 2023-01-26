@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { isLoggedInAtom } from '@/data/wallet'
 
@@ -27,7 +28,9 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <AppWrapper>
       <Header>
-        <Image src="/uPay.png" alt="13" width={56} height={56} priority />
+        <Link href="/">
+          <Image src="/uPay.png" alt="13" width={56} height={56} priority />
+        </Link>
         {isLoggedIn ? <a>Log out</a> : <a>Log in</a>}
       </Header>
       <Component {...pageProps} />
