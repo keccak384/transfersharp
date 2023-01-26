@@ -3,12 +3,12 @@ import * as Label from '@radix-ui/react-label'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { styled } from '/stitches.config'
-import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+import { styled } from '@/../stitches.config'
+import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 
 const SendButton = styled('button', {
   backgroundColor: '$blue9',
