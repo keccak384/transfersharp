@@ -43,7 +43,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 }
 
 function SendTransaction({ transaction }: { transaction: Transaction }) {
-  const didReceiverAccept = false
+  const didReceiverAccept = !!transaction.toWallet
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
