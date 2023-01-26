@@ -1,15 +1,14 @@
 import * as Label from '@radix-ui/react-label'
-import { useAtomValue } from 'jotai'
-import { useResetAtom } from 'jotai/utils'
+import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
-import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
+import { loginModalAtom } from '@/data/modal'
+import { isLoggedInAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
 import { SmallText } from '../components/primitives'
@@ -41,10 +40,8 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
 
 function SendForm() {
   const userData = useAtomValue(userDataAtom)
-  const refreshState = useResetAtom(stateAtom)
+  const setIsLoginModalOpen = useSetAtom(loginModalAtom)
   const router = useRouter()
-
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -99,11 +96,6 @@ function SendForm() {
         <Suspense fallback={<Button disabled>...</Button>}>
           <SubmitButton disabled={true} handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
-        <ConnectWithPhoneDialog
-          isOpen={isLoginModalOpen}
-          setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-          onConnected={refreshState}
-        />
       </StyledSendForm>
     </PageWrapper>
   )

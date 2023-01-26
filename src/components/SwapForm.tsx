@@ -1,10 +1,10 @@
 import * as Label from '@radix-ui/react-label'
 import { useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
 import Image from 'next/image'
 import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
+import { inputValueAtom, outputValueAtom } from '../data/swap'
 import { FlexRow, Input, InputWrapper } from './primitives'
 
 function fetchQuote(amount: number) {
@@ -18,9 +18,6 @@ const CurrencySymbolWrapper = styled('div', {
 
   color: '$gray12',
 })
-
-const inputValueAtom = atomWithStorage('currencyInputValue', 1000)
-const outputValueAtom = atomWithStorage('currencyOutputValue', 1000)
 
 export default function SwapForm() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom)
@@ -42,7 +39,6 @@ export default function SwapForm() {
           <CurrencySymbolWrapper>$</CurrencySymbolWrapper>
           <Input
             name="youSendValue"
-            placeholder="1000"
             pattern="[0-9]*"
             type="number"
             inputMode="numeric"
@@ -58,15 +54,8 @@ export default function SwapForm() {
       <InputWrapper>
         <Label.Root htmlFor="youSendValue">They receive</Label.Root>
         <FlexRow>
-          <CurrencySymbolWrapper>€</CurrencySymbolWrapper>
-          <Input
-            name="youReceiveValue"
-            placeholder="€920.26"
-            pattern="[0-9]*"
-            type="number"
-            inputMode="numeric"
-            value={outputValue}
-          />
+          {outputValue && <CurrencySymbolWrapper>€</CurrencySymbolWrapper>}
+          <Input name="youReceiveValue" pattern="[0-9]*" type="number" inputMode="numeric" value={outputValue} />
           <FlexRow>
             {' '}
             <Image src="/EUR.png" alt="13" width={20} height={20} priority />

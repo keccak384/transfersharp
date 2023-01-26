@@ -1,12 +1,50 @@
-import { useAtomValue } from 'jotai'
-import { useResetAtom } from 'jotai/utils'
+import * as Label from '@radix-ui/react-label'
+import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { styled } from 'stitches.config'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button } from '@/components/primitives'
-import { stateAtom, userDataAtom } from '@/data/wallet'
+import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
+import { loginModalAtom } from '@/data/modal'
+import { userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
+
+import { FlexRowFixed } from '../../components/primitives'
+
+const ReceiveWrapper = styled('div', {
+  maxWidth: '500px',
+  padding: '24px',
+  border: '1px solid $gray6',
+  borderRadius: '24px',
+})
+
+const InviteWrapper = styled(ReceiveWrapper, {
+  backgroundColor: '$gray2',
+  border: 'none',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+})
+
+const BigText = styled('span', {
+  fontSize: '42px',
+  appearance: 'none',
+  color: '$gray12',
+})
+
+const MediumText = styled('span', {
+  fontSize: '20px',
+  appearance: 'none',
+  color: '$gray12',
+})
+
+const FlexColumn = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+})
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -29,31 +67,72 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 
 function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
   const userData = useAtomValue(userDataAtom)
-  const refreshState = useResetAtom(stateAtom)
+  const router = useRouter()
 
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
-  const onConnected = () => {
-    refreshState()
-    // @todo notify backend that user has connected
-  }
+  useEffect(() => {
+    ;(async () => {
+      if (userData && !transaction.toWallet) {
+        const response = await fetch(`/api/authorize/${transaction.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            toWallet: userData.publicAddress,
+          }),
+        })
+
+        // Refresh `server.side` props to get fresh transaction
+        if (response.status === 200) {
+          router.replace(router.asPath)
+          return
+        }
+
+        throw new Error('Something went wrong. Please try again later.')
+      }
+    })()
+  }, [router, userData, transaction])
 
   return (
-    <div style={{ padding: 40 }}>
-      <h2>Pending transaction: {JSON.stringify(transaction)}</h2>
-      {userData ? (
-        <p>Connected</p>
-      ) : (
-        <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
-          Sign in to send
-        </Button>
-      )}
-      <ConnectWithPhoneDialog
-        isOpen={isLoginModalOpen}
-        setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-        onConnected={onConnected}
-      />
-    </div>
+    <PageWrapper>
+      <ReceiveWrapper>
+        <FlexColumn>
+          <Label.Root htmlFor="youSendValue">
+            <MediumText>Hey there, you got an invite to receive funds!</MediumText>
+          </Label.Root>
+
+          <InviteWrapper>
+            <SmallText>Your friend</SmallText>
+            <BigText>{transaction.fromPhoneNumber}</BigText>
+            <SmallText>Wants to send you</SmallText>
+            <FlexRowFixed>
+              <Image src="/EUR.png" alt="13" width={36} height={36} priority />
+              <BigText>EURO</BigText>
+            </FlexRowFixed>
+          </InviteWrapper>
+
+          {userData ? (
+            <>
+              <FlexRowFixed>
+                <Spinner />
+                <PendingText>Waiting for the funds to arrive. You can close this page and come back later.</PendingText>
+              </FlexRowFixed>
+            </>
+          ) : (
+            <>
+              <InvitePendingMessage>
+                {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
+              </InvitePendingMessage>
+              <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
+                Sign up to receive
+              </Button>
+            </>
+          )}
+        </FlexColumn>
+      </ReceiveWrapper>
+    </PageWrapper>
   )
 }
 
