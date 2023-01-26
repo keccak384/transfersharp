@@ -4,13 +4,13 @@ import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import { Suspense, useState } from 'react'
 
-import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import {
   Button,
   FlexRowFixed,
   Input,
   InputWrapper,
+  InvitePendingMessage,
   PageWrapper,
   PendingButton,
   PendingText,
@@ -41,13 +41,6 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     },
   }
 }
-
-const InvitePendingMessage = styled('p', {
-  padding: '24px',
-  backgroundColor: '$blue2',
-  color: '$blue10',
-  borderRadius: '24px',
-})
 
 function SendTransaction({ transaction }: { transaction: Transaction }) {
   const didReceiverAccept = false

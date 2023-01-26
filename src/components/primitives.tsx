@@ -68,6 +68,7 @@ export const FlexRow = styled('div', {
 
 export const FlexRowFixed = styled(FlexRow, {
   justifyContent: 'flex-start',
+  alignItems: 'center',
 })
 
 export const DarkText = styled('span', { color: '$gray12' })
@@ -130,4 +131,11 @@ export const PendingText = styled(SmallText, {
 
 export const SuccessText = styled(SmallText, {
   color: '$green9',
+})
+
+export const InvitePendingMessage = styled('p', {
+  padding: '24px',
+  backgroundColor: '$blue2',
+  color: '$blue10',
+  borderRadius: '24px',
 })
