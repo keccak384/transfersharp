@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
 import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
-import { loginModalAtom } from '@/data/modal'
+import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
@@ -69,6 +69,7 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
   const userData = useAtomValue(userDataAtom)
   const router = useRouter()
 
+  const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
   useEffect(() => {
@@ -125,7 +126,14 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
               <InvitePendingMessage>
                 {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
               </InvitePendingMessage>
-              <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
+              <Button
+                as="a"
+                href="#"
+                onClick={() => {
+                  setLoginModalPhoneNumber(transaction.toPhoneNumber)
+                  setIsLoginModalOpen(true)
+                }}
+              >
                 Sign up to receive
               </Button>
             </>
