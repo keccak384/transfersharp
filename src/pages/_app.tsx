@@ -1,6 +1,10 @@
 import { styled } from '@stitches/react'
+import { useAtomValue } from 'jotai'
 import type { AppProps } from 'next/app'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
+
+import { isLoggedInAtom } from '@/data/wallet'
 
 const AppWrapper = styled('div', {
   display: 'flex',
@@ -18,14 +22,19 @@ const Header = styled('header', {
   padding: '24px',
 })
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
+  const isLoggedIn = useAtomValue(isLoggedInAtom)
   return (
     <AppWrapper>
       <Header>
         <Image src="/uPay.png" alt="13" width={56} height={56} priority />
-        <span>Log in</span>
+        {isLoggedIn ? <a>Log out</a> : <a>Log in</a>}
       </Header>
       <Component {...pageProps} />
     </AppWrapper>
   )
 }
+
+export default dynamic(() => Promise.resolve(App), {
+  ssr: false,
+})

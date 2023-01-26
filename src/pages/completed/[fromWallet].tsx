@@ -1,7 +1,7 @@
 // pages/users/[uid].js
 import { useRouter } from 'next/router'
 
-export default function ReceiveFromWallet() {
+export default function Completed() {
   const router = useRouter()
   const query = router.query
 
@@ -9,7 +9,7 @@ export default function ReceiveFromWallet() {
 
   return (
     <div style={{ padding: 40 }}>
-      <h2>Request to recieve money from: {walletAddress}</h2>
+      <h2>You received money from {walletAddress}</h2>
     </div>
   )
 }
