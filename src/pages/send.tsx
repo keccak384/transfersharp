@@ -4,21 +4,101 @@ import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
+import { styled } from '/stitches.config'
+import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+
+const SendButton = styled('button', {
+  backgroundColor: '$blue9',
+  color: '$gray1',
+  border: 'none',
+  padding: '$2',
+  borderRadius: '20px',
+  textAlign: 'center',
+  fontSize: '20px',
+  fontWeight: '500',
+  display: 'inline-block',
+  '&:hover': {
+    backgroundColor: '$blue5',
+  },
+})
 
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
   return isLoggedIn ? (
-    <button>Send</button>
+    <SendButton>Send</SendButton>
   ) : (
-    <a href="#" onClick={handleLogin}>
+    <SendButton as="a" href="#" onClick={handleLogin}>
       Login to send
-    </a>
+    </SendButton>
   )
 }
+
+const PageWrapper = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100vh',
+  backgroundColor: 'white',
+  color: 'black',
+})
+
+const StyledSendForm = styled('form', {
+  fontSize: '$3',
+  border: '0',
+  maxWidth: '420px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$1',
+})
+
+const InputWrapper = styled('div', {
+  padding: '24px',
+  border: '1px solid $gray5',
+  borderRadius: '20px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$2',
+})
+
+const StyledInput = styled('input', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  backgroundColor: 'transparent',
+  border: 'none',
+  fontSize: '42px',
+  appearance: 'none',
+  color: '$gray11',
+  width: '100%',
+  '&::placeholder': {
+    color: '$gray5',
+  },
+  '&:focus': {
+    outline: 'none',
+  },
+})
+
+const TransactionDetails = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$2',
+  color: '$gray10',
+  padding: '16px',
+})
+
+const FlexRow = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-end',
+  gap: '$2',
+})
+
+const DarkText = styled('span', { color: '$gray11' })
 
 function SendForm() {
   const magic = useAtomValue(stateAtom)
@@ -55,55 +135,82 @@ function SendForm() {
   }
 
   return (
-    <form onSubmit={handleSend}>
-      <Label.Root htmlFor="youSendValue">You send</Label.Root>
-      <input type="number" name="youSendValue" />
+    <PageWrapper>
+      <StyledSendForm onSubmit={handleSend}>
+        <InputWrapper>
+          <Label.Root htmlFor="youSendValue">You send</Label.Root>
+          <FlexRow>
+            <StyledInput name="youSendValue" placeholder="$1000" pattern="[0-9]*" type="text" inputmode="numeric" />
+            <FlexRow>
+              <Image src="/USD.png" alt="13" width={20} height={20} priority />
+              USD
+            </FlexRow>
+          </FlexRow>
+        </InputWrapper>
 
-      <Label.Root htmlFor="youSendValue">You receive</Label.Root>
-      <input type="number" name="youReceiveValue" />
+        <InputWrapper>
+          <Label.Root htmlFor="youSendValue">They receive</Label.Root>
+          <FlexRow>
+            <StyledInput
+              name="youReceiveValue"
+              placeholder="€920.26"
+              pattern="[0-9]*"
+              type="text"
+              inputmode="numeric"
+            />
+            <FlexRow>
+              {' '}
+              <Image src="/EUR.png" alt="13" width={20} height={20} priority />
+              EUR
+            </FlexRow>
+          </FlexRow>
+        </InputWrapper>
 
-      <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-      <input type="tel" name="toPhoneNumber" />
+        <InputWrapper>
+          <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+          <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+        </InputWrapper>
 
-      <div>
-        <div>
-          <span>Current rate</span>
-          <span>$1 = $0.92</span>
-        </div>
-        <div>
-          <span>Total fees</span>
-          <span>$1.23</span>
-        </div>
-        <div>
-          <span>Arrival</span>
-          <span>In seconds</span>
-        </div>
-        <p>
-          Our rate (including any fees) is currently 0.14% better than the European Central Bank (ECB). This comparison
-          rate is typically one of the best available.
-        </p>
-      </div>
+        <TransactionDetails>
+          <FlexRow>
+            <span>Current rate</span>
+            <DarkText>$1 = $0.92</DarkText>
+          </FlexRow>
+          <FlexRow>
+            <span>Total fees</span>
+            <DarkText>$1.23</DarkText>
+          </FlexRow>
+          <FlexRow>
+            <span>Arrival</span>
+            <DarkText>In seconds</DarkText>
+          </FlexRow>
+          <p style={{ fontSize: '12px' }}>
+            Our rate (including any fees) is currently 0.14% better than the European Central Bank (ECB). This
+            comparison rate is typically one of the best available.
+          </p>
+        </TransactionDetails>
 
-      <Suspense fallback={<button disabled>...</button>}>
-        <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
-      </Suspense>
+        <Suspense fallback={<SendButton disabled>...</SendButton>}>
+          <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
+        </Suspense>
 
-      <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay />
-          <Dialog.Content>
-            <h2>
-              Enter your <span>phone number</span> to get started
-            </h2>
-            <p>It has a public address and a nickname that is only visible to you.</p>
-            <form onSubmit={handleLogin}>
-              <input type="email" name="email" required />
-              <button>Login</button>
-            </form>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
-    </form>
+        <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
+          <Dialog.Portal>
+            <Dialog.Overlay />
+            <Dialog.Content>
+              <h2>
+                Enter your <span>phone number</span> to get started
+              </h2>
+              <p>It has a public address and a nickname that is only visible to you.</p>
+              <form onSubmit={handleLogin}>
+                <input type="email" name="email" required />
+                <SendButton>Login</SendButton>
+              </form>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </StyledSendForm>
+    </PageWrapper>
   )
 }
 
