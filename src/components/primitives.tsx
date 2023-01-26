@@ -9,12 +9,24 @@ export const Button = styled('button', {
   textAlign: 'center',
   fontSize: '20px',
   fontWeight: '500',
-  display: 'inline-block',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '8px',
   cursor: 'pointer',
   width: '100%',
   '&:hover': {
-    backgroundColor: '$blue5',
+    opacity: 0.6,
   },
+})
+
+export const InviteButton = styled(Button, {
+  backgroundColor: '$blue10',
+})
+
+export const SuccessButton = styled(Button, {
+  backgroundColor: '$green9',
 })
 
 export const Input = styled('input', {

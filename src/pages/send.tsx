@@ -1,4 +1,6 @@
+import { ChatBubbleIcon, CheckIcon } from '@radix-ui/react-icons'
 import * as Label from '@radix-ui/react-label'
+import { keyframes } from '@stitches/react'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
@@ -9,9 +11,25 @@ import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input } from '@/components/primitives'
+import { Button, Input, InviteButton, SuccessButton } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
+
+const InvitePendingMessage = styled('div', {
+  padding: '24px',
+  backgroundColor: '$blue2',
+  color: '$blue10',
+  borderRadius: '24px',
+})
+
+const SmallText = styled('span', {
+  fontSize: '$1',
+  color: '$gray9',
+})
+
+const PendingText = styled(SmallText, {
+  color: '$blue10',
+})
 
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
@@ -76,7 +94,27 @@ const FlexRow = styled('div', {
   gap: '$2',
 })
 
-const DarkText = styled('span', { color: '$gray11' })
+const FlexRowFixed = styled(FlexRow, {
+  justifyContent: 'flex-start',
+})
+
+const DarkText = styled('span', { color: '$gray12' })
+
+const spin = keyframes({
+  '0%': { transform: 'rotate(0deg)' },
+  '100%': { transform: 'rotate(360deg)' },
+})
+
+const Spinner = styled('span', {
+  width: '16px',
+  height: '16px',
+  border: '2px solid $blue9',
+  borderBottom: '2px solid #fff',
+  borderRadius: '50%',
+  display: 'inline-block',
+  boxSizing: 'border-box',
+  animation: `${spin} 1000ms ease-in-out infinite`,
+})
 
 function SendForm() {
   const userData = useAtomValue(userDataAtom)
@@ -125,6 +163,19 @@ function SendForm() {
     setOutputValue(parseInt(newPrice))
   }, [inputValue, rate])
 
+  const [needsInvite, setNeedsInvite] = useState(true)
+  const [inviteSent, setInviteSent] = useState(false)
+  const [invitePending, setInvitePending] = useState(false)
+
+  const handleInvite = async (e: any) => {
+    e.preventDefault()
+    setInviteSent(true)
+    setTimeout(() => {
+      setNeedsInvite(false)
+      setInvitePending(true)
+    }, 1200)
+  }
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
@@ -166,12 +217,41 @@ function SendForm() {
             </FlexRow>
           </FlexRow>
         </InputWrapper>
-        {userData ? (
+        {/* This field should appear when the user has logged in */}
+        {userData && (
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
             <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+            {/* This button only appears when a phone number is typed */}
+            {needsInvite && (
+              <>
+                {inviteSent ? (
+                  <SuccessButton>
+                    <CheckIcon />
+                    Great, we sent them a text!
+                  </SuccessButton>
+                ) : (
+                  <InviteButton onClick={handleInvite}>
+                    <ChatBubbleIcon />
+                    Notify via SMS
+                  </InviteButton>
+                )}
+              </>
+            )}
+            {invitePending && (
+              <>
+                <FlexRowFixed>
+                  <Spinner />
+                  <PendingText>Waiting for them to join</PendingText>
+                </FlexRowFixed>
+                <InvitePendingMessage>
+                  We will text you when the recipient joins to complete your transfer! You can safely leave this page.
+                </InvitePendingMessage>
+              </>
+            )}
           </InputWrapper>
-        ) : null}
+        )}
+
         <TransactionDetails>
           <FlexRow>
             <span>Current rate</span>
