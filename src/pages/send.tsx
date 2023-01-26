@@ -317,6 +317,7 @@ function SendForm() {
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
             <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+            {/* This button only appears when a phone number is typed */}
             {needsInvite && (
               <>
                 <SmallText>This number hasn’t signed up yet</SmallText>
