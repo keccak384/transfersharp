@@ -1,13 +1,13 @@
 import { styled } from '@stitches/react'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
 
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
+import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 
 const AppWrapper = styled('div', {
@@ -30,8 +30,7 @@ function App({ Component, pageProps }: AppProps) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const magic = useAtomValue(stateAtom)
   const refreshState = useResetAtom(stateAtom)
-
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useAtom(loginModalAtom)
 
   return (
     <AppWrapper>
