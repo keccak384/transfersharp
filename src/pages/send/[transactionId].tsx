@@ -22,7 +22,7 @@ import {
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom } from '@/data/modal'
-import { isLoggedInAtom } from '@/data/wallet'
+import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
