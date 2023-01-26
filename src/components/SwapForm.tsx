@@ -2,7 +2,7 @@ import * as Label from '@radix-ui/react-label'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
 import { FlexRow, Input, InputWrapper } from './primitives'
@@ -32,7 +32,7 @@ export default function SwapForm() {
       const json = await res.json()
       setOutputValue(json.quote)
     })
-  }, [inputValue])
+  }, [inputValue, setOutputValue])
 
   return (
     <>
