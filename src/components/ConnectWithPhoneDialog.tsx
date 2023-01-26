@@ -74,9 +74,7 @@ export default function ConnectWithPhoneDialog({
       <Dialog.Portal>
         <DialogOverlay />
         <DialogContent>
-          <h2>
-            Enter your <span>phone number</span> to get started
-          </h2>
+          <h2>Enter your phone number to get started</h2>
           <p>It has a public address and a nickname that is only visible to you.</p>
           <DialogForm onSubmit={handleLogin}>
             <Input name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
