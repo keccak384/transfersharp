@@ -1,6 +1,8 @@
 import * as Label from '@radix-ui/react-label'
+import { useAtom } from 'jotai'
+import { atomWithStorage } from 'jotai/utils'
 import Image from 'next/image'
-import React, { FormEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from 'stitches.config'
 
 import { FlexRow, Input, InputWrapper } from './primitives'
@@ -11,22 +13,19 @@ const CurrencySymbolWrapper = styled('div', {
   color: '$gray12',
 })
 
-export default function SwapForm() {
-  const [inputValue, setInputValue] = useState(1000)
-  const [outputValue, setOutputValue] = useState(1000)
-  const [rate] = useState(0.92)
+const inputValueAtom = atomWithStorage('currencyInputValue', 1000)
+const outputValueAtom = atomWithStorage('currencyOutputValue', 1000)
 
-  const onInputChange = (e: FormEvent<HTMLInputElement>) => {
-    const value = +e.currentTarget.value
-    const newPrice = (value * rate).toFixed(2)
-    setOutputValue(parseInt(newPrice))
-    setInputValue(value)
-  }
+export default function SwapForm() {
+  const [inputValue, setInputValue] = useAtom(inputValueAtom)
+  const [outputValue, setOutputValue] = useAtom(outputValueAtom)
+
+  const [rate] = useState(0.92)
 
   useEffect(() => {
     const newPrice = (inputValue * rate).toFixed(2)
     setOutputValue(parseInt(newPrice))
-  }, [inputValue, rate])
+  }, [inputValue, rate, setOutputValue])
 
   return (
     <>
@@ -40,7 +39,7 @@ export default function SwapForm() {
             pattern="[0-9]*"
             type="number"
             inputMode="numeric"
-            onChange={onInputChange}
+            onChange={(e) => setInputValue(+e.currentTarget.value)}
             value={inputValue}
           />
           <FlexRow>
