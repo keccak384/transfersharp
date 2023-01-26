@@ -1,5 +1,5 @@
 import * as Label from '@radix-ui/react-label'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
@@ -9,6 +9,7 @@ import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
+import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
@@ -34,9 +35,8 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
 function SendForm() {
   const userData = useAtomValue(userDataAtom)
   const refreshState = useResetAtom(stateAtom)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useAtom(loginModalAtom)
   const router = useRouter()
-
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
