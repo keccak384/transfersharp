@@ -5,7 +5,9 @@ import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 
+import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 
 const AppWrapper = styled('div', {
@@ -29,6 +31,8 @@ function App({ Component, pageProps }: AppProps) {
   const magic = useAtomValue(stateAtom)
   const refreshState = useResetAtom(stateAtom)
 
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
   return (
     <AppWrapper>
       <Header>
@@ -46,9 +50,19 @@ function App({ Component, pageProps }: AppProps) {
             Log out
           </a>
         ) : (
-          <a>Log in</a>
+          <>
+            <a href="#" onClick={() => setIsLoginModalOpen(true)}>
+              Log in
+            </a>
+            <ConnectWithPhoneDialog
+              isOpen={isLoginModalOpen}
+              setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
+              onConnected={refreshState}
+            />
+          </>
         )}
       </Header>
+
       <Component {...pageProps} />
     </AppWrapper>
   )
