@@ -13,6 +13,12 @@ import { Button, Input } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
+function fetchQuote(amount: number) {
+  return fetch(
+    `https://jnru9d0d29.execute-api.us-east-1.amazonaws.com/prod/quote?tokenInAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&tokenInChainId=1&tokenOutAddress=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&tokenOutChainId=1&amount=${amount}&type=exactIn`
+  )
+}
+
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
@@ -109,21 +115,19 @@ function SendForm() {
     router.push(`/send/${data.id}`)
   }
 
-  const [inputValue, setInputValue] = useState(1000)
-  const [outputValue, setOutputValue] = useState(1000)
-  const [rate] = useState(0.92)
+  const [inputValue, setInputValue] = useState(0)
+  const [outputValue, setOutputValue] = useState(0)
   const onInputChange = (e: FormEvent<HTMLInputElement>) => {
-    const value = +e.currentTarget.value
-    const newPrice = (value * rate).toFixed(2)
-    setOutputValue(parseInt(newPrice))
-    setInputValue(value)
+    setInputValue(e.currentTarget.value)
   }
 
   useEffect(() => {
     // Update the document title using the browser API
-    const newPrice = (inputValue * rate).toFixed(2)
-    setOutputValue(parseInt(newPrice))
-  }, [inputValue, rate])
+    fetchQuote(inputValue).then(async (res) => {
+      const json = await res.json()
+      setOutputValue(json.quote)
+    })
+  }, [inputValue])
 
   return (
     <PageWrapper>
