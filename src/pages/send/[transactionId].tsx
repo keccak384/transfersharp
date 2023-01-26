@@ -4,13 +4,13 @@ import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import { Suspense, useState } from 'react'
 
-import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import {
   Button,
   FlexRowFixed,
   Input,
   InputWrapper,
+  InvitePendingMessage,
   PageWrapper,
   PendingButton,
   PendingText,
@@ -41,13 +41,6 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     },
   }
 }
-
-const InvitePendingMessage = styled('p', {
-  padding: '24px',
-  backgroundColor: '$blue2',
-  color: '$blue10',
-  borderRadius: '24px',
-})
 
 function SendTransaction({ transaction }: { transaction: Transaction }) {
   const didReceiverAccept = false
@@ -82,7 +75,8 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
                 <PendingText>Waiting for them to join</PendingText>
               </FlexRowFixed>
               <InvitePendingMessage>
-                We will text you when the recipient joins to complete your transfer! You can safely leave this page.
+                Great! We texted them. When the recipient signs up you can complete your transfer! You can safely leave
+                this page.
               </InvitePendingMessage>
             </>
           )}

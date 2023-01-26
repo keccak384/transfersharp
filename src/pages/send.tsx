@@ -6,7 +6,15 @@ import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
+import {
+  Button,
+  Input,
+  InputWrapper,
+  InvitePendingMessage,
+  PageWrapper,
+  PendingButton,
+  StyledSendForm,
+} from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
@@ -17,7 +25,7 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
   const ButtonComponent = disabled ? PendingButton : Button
 
   return isLoggedIn ? (
-    <ButtonComponent>Notify via SMS</ButtonComponent>
+    <ButtonComponent>Send</ButtonComponent>
   ) : (
     <ButtonComponent
       onClick={(e) => {
@@ -71,16 +79,22 @@ function SendForm() {
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
         <SwapForm />
-        <InputWrapper>
-          <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-          <Input
-            onChange={onPhoneNumberChange}
-            value={phoneNumber}
-            type="tel"
-            name="toPhoneNumber"
-            placeholder="+1 800 888 8888"
-          />
-        </InputWrapper>
+        {userData && (
+          <InputWrapper>
+            <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+            <Input
+              onChange={onPhoneNumberChange}
+              value={phoneNumber}
+              type="tel"
+              name="toPhoneNumber"
+              placeholder="+1 800 888 8888"
+            />
+            <InvitePendingMessage>
+              {`If your recipient hasn't used yet don't worry! We'll text them an invite to join.`}
+            </InvitePendingMessage>
+            {phoneNumber.length !== 0 && <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />}
+          </InputWrapper>
+        )}
         <TransactionDetails />
         <Suspense fallback={<Button disabled>...</Button>}>
           <SubmitButton disabled={phoneNumber.length === 0} handleLogin={() => setIsLoginModalOpen(true)} />
