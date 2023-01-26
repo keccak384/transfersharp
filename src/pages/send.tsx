@@ -1,5 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import { ChatBubbleIcon, CheckIcon } from '@radix-ui/react-icons'
 import * as Label from '@radix-ui/react-label'
+import { keyframes } from '@stitches/react'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
@@ -21,7 +23,11 @@ const SendButton = styled('button', {
   textAlign: 'center',
   fontSize: '20px',
   fontWeight: '500',
-  display: 'inline-block',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '8px',
   cursor: 'pointer',
   width: '100%',
   '&:hover': {
@@ -44,7 +50,7 @@ const InvitePendingMessage = styled('div', {
 })
 
 const SmallText = styled('span', {
-  fontSize: '$2',
+  fontSize: '$1',
   color: '$gray9',
 })
 
@@ -133,6 +139,10 @@ const FlexRow = styled('div', {
   gap: '$2',
 })
 
+const FlexRowFixed = styled(FlexRow, {
+  justifyContent: 'flex-start',
+})
+
 const DarkText = styled('span', { color: '$gray12' })
 
 const DialogOverlay = styled(Dialog.Overlay, {
@@ -163,6 +173,22 @@ const DialogForm = styled('form', {
   display: 'flex',
   flexDirection: 'column',
   gap: '24px',
+})
+
+const spin = keyframes({
+  '0%': { transform: 'rotate(0deg)' },
+  '100%': { transform: 'rotate(360deg)' },
+})
+
+const Spinner = styled('span', {
+  width: '16px',
+  height: '16px',
+  border: '2px solid $blue9',
+  borderBottom: '2px solid #fff',
+  borderRadius: '50%',
+  display: 'inline-block',
+  boxSizing: 'border-box',
+  animation: `${spin} 1000ms ease-in-out infinite`,
 })
 
 function SendForm() {
@@ -236,7 +262,7 @@ function SendForm() {
   const [inviteSent, setInviteSent] = useState(false)
   const [invitePending, setInvitePending] = useState(false)
 
-  const handleInvite = async (e) => {
+  const handleInvite = async (e: any) => {
     e.preventDefault()
     setInviteSent(true)
     setTimeout(() => {
@@ -287,7 +313,7 @@ function SendForm() {
           </FlexRow>
         </InputWrapper>
         {/* This field should appear when the user has logged in */}
-        {!userData && (
+        {userData && (
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
             <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
@@ -295,15 +321,24 @@ function SendForm() {
               <>
                 <SmallText>This number hasn’t signed up yet</SmallText>
                 {inviteSent ? (
-                  <SuccessButton>Invite Sent!</SuccessButton>
+                  <SuccessButton>
+                    <CheckIcon />
+                    Invite Sent!
+                  </SuccessButton>
                 ) : (
-                  <InviteButton onClick={handleInvite}>Invite via SMS</InviteButton>
+                  <InviteButton onClick={handleInvite}>
+                    <ChatBubbleIcon />
+                    Invite via SMS
+                  </InviteButton>
                 )}
               </>
             )}
             {invitePending && (
               <>
-                <PendingText>Waiting for them to join</PendingText>
+                <FlexRowFixed>
+                  <Spinner />
+                  <PendingText>Waiting for them to join</PendingText>
+                </FlexRowFixed>
                 <InvitePendingMessage>
                   We will text you when the recipient joins to complete your transfer! You can safely leave this page.
                 </InvitePendingMessage>
@@ -341,11 +376,13 @@ function SendForm() {
               <h2>
                 Enter your <span>phone number</span> to get started
               </h2>
-              <p>It has a public address and a nickname that is only visible to you.</p>
               <DialogForm onSubmit={handleLogin}>
-                <StyledInput name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
+                <StyledInput name="fromPhoneNumber" placeholder="800 888 8888" required />
                 <SendButton>Login</SendButton>
               </DialogForm>
+              <SmallText>
+                Your phone number will be used for authetication only. It will never be shared without your permission.
+              </SmallText>
             </DialogContent>
           </Dialog.Portal>
         </Dialog.Root>
