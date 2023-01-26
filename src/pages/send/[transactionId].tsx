@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { Suspense } from 'react'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import {
   Button,
   FlexRowFixed,
@@ -16,7 +15,6 @@ import {
   PendingText,
   Spinner,
   StyledSendForm,
-  SmallText,
   SuccessText,
 } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
