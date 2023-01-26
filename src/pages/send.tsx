@@ -9,6 +9,7 @@ import { FormEvent, Suspense, useState } from 'react'
 
 import { styled } from '@/../stitches.config'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
+import type { Transaction } from '@/db/transactions'
 
 const SendButton = styled('button', {
   backgroundColor: '$blue9',
@@ -154,7 +155,23 @@ function SendForm() {
     if (!userData) {
       throw new Error('Not authenticated, please log in first')
     }
-    router.push(`/receive/${userData.publicAddress}`)
+    const form = new FormData(e.currentTarget)
+    const response = await fetch(`/api/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        fromWallet: userData.publicAddress,
+        fromPhoneNumber: userData.phoneNumber,
+        toPhoneNumber: form.get('toPhoneNumber')?.toString(),
+      }),
+    })
+    if (response.status !== 201) {
+      throw new Error('Error while creating transaction, please try again.')
+    }
+    const data = (await response.json()) as Transaction
+    router.push(`/send/${data.id}`)
   }
 
   return (
