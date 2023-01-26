@@ -31,6 +31,10 @@ const DialogContent = styled(Dialog.Content, {
   gap: '24px',
 })
 
+const DialogPortal = styled(Dialog.Portal, {
+  zIndex: 1000,
+})
+
 const DialogForm = styled('form', {
   display: 'flex',
   flexDirection: 'column',
@@ -71,7 +75,7 @@ export default function ConnectWithPhoneDialog({
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-      <Dialog.Portal>
+      <DialogPortal>
         <DialogOverlay />
         <DialogContent>
           <h2>Enter your phone number to get started</h2>
@@ -81,7 +85,7 @@ export default function ConnectWithPhoneDialog({
             <Button>Login</Button>
           </DialogForm>
         </DialogContent>
-      </Dialog.Portal>
+      </DialogPortal>
     </Dialog.Root>
   )
 }

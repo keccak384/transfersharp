@@ -2,87 +2,34 @@ import * as Label from '@radix-ui/react-label'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
-import { useEffect } from 'react'
 
-import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input } from '@/components/primitives'
+import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
+import SwapForm from '@/components/SwapForm'
+import TransactionDetails from '@/components/TransactionDetails'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
-function fetchQuote(amount: number) {
-  return fetch(
-    `https://jnru9d0d29.execute-api.us-east-1.amazonaws.com/prod/quote?tokenInAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&tokenInChainId=1&tokenOutAddress=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&tokenOutChainId=1&amount=${amount}&type=exactIn`
-  )
-}
-
-function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
+function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => void; disabled?: boolean }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
+  const ButtonComponent = disabled ? PendingButton : Button
 
   return isLoggedIn ? (
-    <Button>Send</Button>
+    <ButtonComponent>Notify via SMS</ButtonComponent>
   ) : (
-    <Button as="a" href="#" onClick={handleLogin}>
+    <ButtonComponent
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        handleLogin()
+      }}
+    >
       Sign in to send
-    </Button>
+    </ButtonComponent>
   )
 }
-
-const PageWrapper = styled('div', {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  alignSelf: 'center',
-  margin: 'auto',
-  backgroundColor: 'white',
-  color: 'black',
-})
-
-const StyledSendForm = styled('form', {
-  fontSize: '$3',
-  border: '0',
-  maxWidth: '420px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$1',
-})
-
-const InputWrapper = styled('div', {
-  padding: '24px',
-  border: '1px solid $gray5',
-  borderRadius: '20px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$2',
-  color: '$gray12',
-})
-
-const CurrencySymbolWrapper = styled('div', {
-  fontSize: '42px',
-
-  color: '$gray12',
-})
-
-const TransactionDetails = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$2',
-  color: '$gray10',
-  padding: '16px',
-})
-
-const FlexRow = styled('div', {
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'flex-end',
-  gap: '$2',
-})
-
-const DarkText = styled('span', { color: '$gray11' })
 
 function SendForm() {
   const userData = useAtomValue(userDataAtom)
@@ -115,89 +62,29 @@ function SendForm() {
     router.push(`/send/${data.id}`)
   }
 
-  const [inputValue, setInputValue] = useState(0)
-  const [outputValue, setOutputValue] = useState(0)
-  const onInputChange = (e: FormEvent<HTMLInputElement>) => {
-    setInputValue(e.currentTarget.value)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const onPhoneNumberChange = (e: FormEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.currentTarget.value)
   }
-
-  useEffect(() => {
-    // Update the document title using the browser API
-    fetchQuote(inputValue).then(async (res) => {
-      const json = await res.json()
-      setOutputValue(json.quote)
-    })
-  }, [inputValue])
 
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
+        <SwapForm />
         <InputWrapper>
-          <Label.Root htmlFor="youSendValue">You send</Label.Root>
-          <FlexRow>
-            <CurrencySymbolWrapper>$</CurrencySymbolWrapper>
-            <Input
-              name="youSendValue"
-              placeholder="1000"
-              pattern="[0-9]*"
-              type="number"
-              inputMode="numeric"
-              onChange={onInputChange}
-              value={inputValue}
-            />
-            <FlexRow>
-              <Image src="/USD.png" alt="13" width={20} height={20} priority />
-              USD
-            </FlexRow>
-          </FlexRow>
+          <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+          <Input
+            onChange={onPhoneNumberChange}
+            value={phoneNumber}
+            type="tel"
+            name="toPhoneNumber"
+            placeholder="+1 800 888 8888"
+          />
         </InputWrapper>
-        <InputWrapper>
-          <Label.Root htmlFor="youSendValue">They receive</Label.Root>
-          <FlexRow>
-            <CurrencySymbolWrapper>€</CurrencySymbolWrapper>
-            <Input
-              name="youReceiveValue"
-              placeholder="€920.26"
-              pattern="[0-9]*"
-              type="number"
-              inputMode="numeric"
-              value={outputValue}
-            />
-            <FlexRow>
-              {' '}
-              <Image src="/EUR.png" alt="13" width={20} height={20} priority />
-              EUR
-            </FlexRow>
-          </FlexRow>
-        </InputWrapper>
-        {userData ? (
-          <InputWrapper>
-            <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-            <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
-          </InputWrapper>
-        ) : null}
-        <TransactionDetails>
-          <FlexRow>
-            <span>Current rate</span>
-            <DarkText>$1 = $0.92</DarkText>
-          </FlexRow>
-          <FlexRow>
-            <span>Total fees</span>
-            <DarkText>$1.23</DarkText>
-          </FlexRow>
-          <FlexRow>
-            <span>Arrival</span>
-            <DarkText>In seconds</DarkText>
-          </FlexRow>
-          <p style={{ fontSize: '12px' }}>
-            Our rate (including any fees) is currently 0.14% better than the European Central Bank (ECB). This
-            comparison rate is typically one of the best available.
-          </p>
-        </TransactionDetails>
+        <TransactionDetails />
         <Suspense fallback={<Button disabled>...</Button>}>
-          <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
+          <SubmitButton disabled={phoneNumber.length === 0} handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
-
         <ConnectWithPhoneDialog
           isOpen={isLoginModalOpen}
           setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
