@@ -1,7 +1,9 @@
+import { useAtomValue } from 'jotai'
 import React from 'react'
 import { styled } from 'stitches.config'
 
 import { DarkText, FlexRow } from './primitives'
+import { inputValueAtom, outputValueAtom } from './SwapForm'
 
 const Wrapper = styled('div', {
   display: 'flex',
@@ -12,11 +14,16 @@ const Wrapper = styled('div', {
 })
 
 export default function TransactionDetails() {
+  const inputValue = useAtomValue(inputValueAtom)
+  const outputValue = useAtomValue(outputValueAtom)
+
+  const rate = Math.round((outputValue / inputValue) * 100) / 100
+
   return (
     <Wrapper>
       <FlexRow>
         <span>Current rate</span>
-        <DarkText>$1 = $0.92</DarkText>
+        <DarkText>$1 = ${rate}</DarkText>
       </FlexRow>
       <FlexRow>
         <span>Total fees</span>
