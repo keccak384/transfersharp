@@ -53,16 +53,17 @@ function App({ Component, pageProps }: AppProps) {
             <a href="#" onClick={() => setIsLoginModalOpen(true)}>
               Log in
             </a>
-            <ConnectWithPhoneDialog
-              isOpen={isLoginModalOpen}
-              setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-              onConnected={refreshState}
-            />
           </>
         )}
       </Header>
 
       <Component {...pageProps} />
+
+      <ConnectWithPhoneDialog
+        isOpen={isLoginModalOpen}
+        setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
+        onConnected={refreshState}
+      />
     </AppWrapper>
   )
 }

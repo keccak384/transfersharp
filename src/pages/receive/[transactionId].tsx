@@ -1,15 +1,14 @@
 import * as Label from '@radix-ui/react-label'
-import { useAtomValue } from 'jotai'
-import { useResetAtom } from 'jotai/utils'
+import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
-import { stateAtom, userDataAtom } from '@/data/wallet'
+import { loginModalAtom } from '@/data/modal'
+import { userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 import { FlexRowFixed } from '../../components/primitives'
@@ -68,10 +67,9 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 
 function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
   const userData = useAtomValue(userDataAtom)
-  const refreshState = useResetAtom(stateAtom)
   const router = useRouter()
 
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
   useEffect(() => {
     ;(async () => {
@@ -132,13 +130,6 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
               </Button>
             </>
           )}
-
-          <ConnectWithPhoneDialog
-            isOpen={isLoginModalOpen}
-            setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-            onConnected={refreshState}
-            phoneNumber={transaction.toPhoneNumber}
-          />
         </FlexColumn>
       </ReceiveWrapper>
     </PageWrapper>
