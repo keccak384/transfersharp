@@ -19,7 +19,6 @@ const CurrencySymbolWrapper = styled('div', {
   color: '$gray12',
 })
 
-
 export default function SwapForm() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom)
   const [outputValue, setOutputValue] = useAtom(outputValueAtom)
