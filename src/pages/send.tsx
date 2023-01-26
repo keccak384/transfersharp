@@ -42,7 +42,8 @@ const PageWrapper = styled('div', {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  height: '100vh',
+  alignSelf: 'center',
+  margin: 'auto',
   backgroundColor: 'white',
   color: 'black',
 })
@@ -101,6 +102,25 @@ const FlexRow = styled('div', {
 
 const DarkText = styled('span', { color: '$gray11' })
 
+const DialogOverlay = styled(Dialog.Overlay, {
+  position: 'fixed',
+  inset: '0',
+  animation: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+})
+
+const DialogContent = styled(Dialog.Content, {
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90vw',
+  maxWidth: '450px',
+  maxHeight: '85vh',
+  backgroundColor: 'white',
+  animation: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+  padding: '25px',
+})
+
 function SendForm() {
   const magic = useAtomValue(stateAtom)
   const userData = useAtomValue(userDataAtom)
@@ -112,13 +132,13 @@ function SendForm() {
     e.preventDefault()
 
     try {
-      const email = new FormData(e.currentTarget).get('email')?.toString()
+      const phoneNumber = new FormData(e.currentTarget).get('phone')?.toString()
 
-      if (!email) {
-        throw new Error('Email is required')
+      if (!phoneNumber) {
+        throw new Error('Phone is required')
       }
 
-      await magic.auth.loginWithEmailOTP({ email })
+      await magic.auth.loginWithSMS({ phoneNumber })
       refreshState()
     } catch (error) {
       console.log(`Error while logging in with MagicLink: ${error}`)
@@ -148,7 +168,6 @@ function SendForm() {
             </FlexRow>
           </FlexRow>
         </InputWrapper>
-
         <InputWrapper>
           <Label.Root htmlFor="youSendValue">They receive</Label.Root>
           <FlexRow>
@@ -166,12 +185,10 @@ function SendForm() {
             </FlexRow>
           </FlexRow>
         </InputWrapper>
-
         <InputWrapper>
           <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
           <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
         </InputWrapper>
-
         <TransactionDetails>
           <FlexRow>
             <span>Current rate</span>
@@ -190,24 +207,23 @@ function SendForm() {
             comparison rate is typically one of the best available.
           </p>
         </TransactionDetails>
-
         <Suspense fallback={<SendButton disabled>...</SendButton>}>
           <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
 
         <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
           <Dialog.Portal>
-            <Dialog.Overlay />
-            <Dialog.Content>
+            <DialogOverlay />
+            <DialogContent>
               <h2>
                 Enter your <span>phone number</span> to get started
               </h2>
               <p>It has a public address and a nickname that is only visible to you.</p>
               <form onSubmit={handleLogin}>
-                <input type="email" name="email" required />
+                <input type="tel" name="phone" required />
                 <SendButton>Login</SendButton>
               </form>
-            </Dialog.Content>
+            </DialogContent>
           </Dialog.Portal>
         </Dialog.Root>
       </StyledSendForm>
