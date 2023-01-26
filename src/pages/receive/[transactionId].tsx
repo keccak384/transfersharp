@@ -3,11 +3,11 @@ import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { styled } from 'stitches.config'
 
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, InvitePendingMessage, PageWrapper, SmallText } from '@/components/primitives'
+import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
 import { stateAtom, userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
@@ -71,10 +71,11 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
-  const onConnected = () => {
-    refreshState()
-    // @todo notify backend that user has connected
-  }
+  useEffect(() => {
+    if (userData && !transaction.toWallet) {
+      // @todo notify backend that user has connected
+    }
+  }, [userData, transaction])
 
   return (
     <PageWrapper>
@@ -93,21 +94,29 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
               <BigText>EURO</BigText>
             </FlexRowFixed>
           </InviteWrapper>
-          <InvitePendingMessage>
-            {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
-          </InvitePendingMessage>
+
           {userData ? (
-            <p>Connected</p>
+            <>
+              <FlexRowFixed>
+                <Spinner />
+                <PendingText>Waiting for the funds to arrive. You can close this page and come back later.</PendingText>
+              </FlexRowFixed>
+            </>
           ) : (
-            <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
-              Sign up to receive
-            </Button>
+            <>
+              <InvitePendingMessage>
+                {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
+              </InvitePendingMessage>
+              <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
+                Sign up to receive
+              </Button>
+            </>
           )}
 
           <ConnectWithPhoneDialog
             isOpen={isLoginModalOpen}
             setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-            onConnected={onConnected}
+            onConnected={refreshState}
             phoneNumber={transaction.toPhoneNumber}
           />
         </FlexColumn>
