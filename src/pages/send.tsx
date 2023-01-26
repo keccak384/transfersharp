@@ -9,25 +9,10 @@ import { FormEvent, Suspense, useState } from 'react'
 import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
+import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
+import { SendButton, StyledInput } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
-
-const SendButton = styled('button', {
-  backgroundColor: '$gray12',
-  color: '$gray1',
-  border: 'none',
-  padding: '16px',
-  borderRadius: '40px',
-  textAlign: 'center',
-  fontSize: '20px',
-  fontWeight: '500',
-  display: 'inline-block',
-  cursor: 'pointer',
-  width: '100%',
-  '&:hover': {
-    backgroundColor: '$blue5',
-  },
-})
 
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
@@ -68,24 +53,6 @@ const InputWrapper = styled('div', {
   flexDirection: 'column',
   gap: '$2',
   color: '$gray12',
-})
-
-const StyledInput = styled('input', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-  backgroundColor: 'transparent',
-  border: 'none',
-  fontSize: '42px',
-  appearance: 'none',
-  color: '$gray12',
-  width: '100%',
-  '&::placeholder': {
-    color: '$gray5',
-  },
-  '&:focus': {
-    outline: 'none',
-  },
 })
 
 const CurrencySymbolWrapper = styled('div', {
@@ -278,21 +245,11 @@ function SendForm() {
           <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
 
-        <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-          <Dialog.Portal>
-            <DialogOverlay />
-            <DialogContent>
-              <h2>
-                Enter your <span>phone number</span> to get started
-              </h2>
-              <p>It has a public address and a nickname that is only visible to you.</p>
-              <DialogForm onSubmit={handleLogin}>
-                <StyledInput name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
-                <SendButton>Login</SendButton>
-              </DialogForm>
-            </DialogContent>
-          </Dialog.Portal>
-        </Dialog.Root>
+        <ConnectWithPhoneDialog
+          isOpen={isLoginModalOpen}
+          setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
+          handleLogin={handleLogin}
+        />
       </StyledSendForm>
     </PageWrapper>
   )
