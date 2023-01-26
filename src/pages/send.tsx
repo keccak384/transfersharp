@@ -11,14 +11,6 @@ import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
-import { SmallText } from '../components/primitives'
-
-function InviteButton({ disabled = false }: { disabled?: boolean }) {
-  const ButtonComponent = disabled ? PendingButton : Button
-
-  return <ButtonComponent>Invite via SMS</ButtonComponent>
-}
-
 function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => void; disabled?: boolean }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const ButtonComponent = disabled ? PendingButton : Button
