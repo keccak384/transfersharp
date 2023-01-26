@@ -4,12 +4,12 @@ import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { appStateAtom, isLoggedInAtom } from '@/data'
+import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 
 function SendButton() {
-  const magic = useAtomValue(appStateAtom)
+  const magic = useAtomValue(stateAtom)
   const isLoggedIn = useAtomValue(isLoggedInAtom)
-  const refreshState = useResetAtom(appStateAtom)
+  const refreshState = useResetAtom(stateAtom)
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {

@@ -2,7 +2,7 @@ import { atom } from 'jotai'
 import { atomWithDefault, RESET } from 'jotai/utils'
 import { Magic } from 'magic-sdk'
 
-import { MAGIC_PUBLIC_KEY } from './env'
+import { MAGIC_PUBLIC_KEY } from '../env'
 
 const createMagicClient = () => new Magic(MAGIC_PUBLIC_KEY)
 
@@ -13,7 +13,7 @@ const createMagicClient = () => new Magic(MAGIC_PUBLIC_KEY)
 const magicAtom = atomWithDefault(createMagicClient)
 
 // Resettable top-level atom to refresh all other atoms and keep the client in sync
-export const appStateAtom = atom(
+export const stateAtom = atom(
   (get) => get(magicAtom),
   (_, set, action) => (action === RESET ? set(magicAtom, createMagicClient()) : undefined)
 )
