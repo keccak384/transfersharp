@@ -1,20 +1,15 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { Magic } from 'magic-sdk'
+import { useAtom } from 'jotai'
+import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { FormEvent, useState } from 'react'
 
-import { MAGIC_PUBLIC_KEY } from '@/env'
+import { isLoggedInAtom, magicAtom } from '@/data'
 
 function Send() {
-  const magic = useRef(new Magic(MAGIC_PUBLIC_KEY))
-
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>()
-  useEffect(() => {
-    ;(async () => {
-      const isLoggedIn = await magic.current.user.isLoggedIn()
-      setIsLoggedIn(isLoggedIn)
-    })()
-  }, [])
+  const [magic] = useAtom(magicAtom)
+  const [isLoggedIn] = useAtom(isLoggedInAtom)
+  const refreshLoginState = useResetAtom(isLoggedInAtom)
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -27,10 +22,8 @@ function Send() {
         throw new Error('Email is required')
       }
 
-      const tokenId = await magic.current.auth.loginWithEmailOTP({ email })
-      if (tokenId) {
-        setIsLoggedIn(true)
-      }
+      await magic.auth.loginWithEmailOTP({ email })
+      refreshLoginState()
     } catch (error) {
       console.log(`Error while logging in with MagicLink: ${error}`)
     } finally {
