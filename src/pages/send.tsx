@@ -1,15 +1,15 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { useAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { isLoggedInAtom, magicAtom } from '@/data'
+import { appStateAtom, isLoggedInAtom } from '@/data'
 
 function SendButton() {
-  const [magic] = useAtom(magicAtom)
-  const [isLoggedIn] = useAtom(isLoggedInAtom)
-  const refreshState = useResetAtom(magicAtom)
+  const magic = useAtomValue(appStateAtom)
+  const isLoggedIn = useAtomValue(isLoggedInAtom)
+  const refreshState = useResetAtom(appStateAtom)
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -31,9 +31,13 @@ function SendButton() {
     }
   }
 
+  const handleSend = async () => {
+    console.log(`Sending...`)
+  }
+
   return (
     <div>
-      <a href="#" onClick={() => setIsLoginModalOpen(true)}>
+      <a href="#" onClick={() => (isLoggedIn ? handleSend() : setIsLoginModalOpen(true))}>
         Send
       </a>
       {isLoggedIn && <p>You are logged in</p>}
@@ -41,6 +45,10 @@ function SendButton() {
         <Dialog.Portal>
           <Dialog.Overlay />
           <Dialog.Content>
+            <h2>
+              Enter your <span>phone number</span> to get started
+            </h2>
+            <p>It has a public address and a nickname that is only visible to you.</p>
             <form onSubmit={handleLogin}>
               <input type="email" name="email" required />
               <button>Login</button>
