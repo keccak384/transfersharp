@@ -83,7 +83,7 @@ export default function ConnectWithPhoneDialog({
           <h2>Enter your phone number to get started</h2>
           <p>It has a public address and a nickname that is only visible to you.</p>
           <DialogForm onSubmit={handleLogin}>
-            <Input name="fromPhoneNumber" placeholder="+1 800 888 8888" required defaultValue={phoneNumber} />
+            <Input name="fromPhoneNumber" placeholder="+1 800 888 8888" required value={phoneNumber} />
             <Button>Login</Button>
           </DialogForm>
         </DialogContent>

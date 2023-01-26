@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { styled } from 'stitches.config'
 
@@ -68,14 +69,33 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
   const userData = useAtomValue(userDataAtom)
   const refreshState = useResetAtom(stateAtom)
+  const router = useRouter()
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   useEffect(() => {
-    if (userData && !transaction.toWallet) {
-      // @todo notify backend that user has connected
-    }
-  }, [userData, transaction])
+    ;(async () => {
+      if (userData && !transaction.toWallet) {
+        const response = await fetch(`/api/authorize/${transaction.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            toWallet: userData.publicAddress,
+          }),
+        })
+
+        // Refresh `server.side` props to get fresh transaction
+        if (response.status === 200) {
+          router.replace(router.asPath)
+          return
+        }
+
+        throw new Error('Something went wrong. Please try again later.')
+      }
+    })()
+  }, [router, userData, transaction])
 
   return (
     <PageWrapper>
