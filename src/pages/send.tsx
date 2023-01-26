@@ -1,4 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import * as Label from '@radix-ui/react-label'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
@@ -6,9 +7,20 @@ import { FormEvent, Suspense, useState } from 'react'
 
 import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 
-function SendButton() {
-  const magic = useAtomValue(stateAtom)
+function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
+
+  return isLoggedIn ? (
+    <button>Send</button>
+  ) : (
+    <a href="#" onClick={handleLogin}>
+      Login to send
+    </a>
+  )
+}
+
+function SendForm() {
+  const magic = useAtomValue(stateAtom)
   const refreshState = useResetAtom(stateAtom)
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
@@ -31,16 +43,45 @@ function SendButton() {
     }
   }
 
-  const handleSend = async () => {
+  const handleSend = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     console.log(`Sending...`)
   }
 
   return (
-    <div>
-      <a href="#" onClick={() => (isLoggedIn ? handleSend() : setIsLoginModalOpen(true))}>
-        Send
-      </a>
-      {isLoggedIn && <p>You are logged in</p>}
+    <form onSubmit={handleSend}>
+      <Label.Root htmlFor="youSendValue">You send</Label.Root>
+      <input type="number" name="youSendValue" />
+
+      <Label.Root htmlFor="youSendValue">You receive</Label.Root>
+      <input type="number" name="youReceiveValue" />
+
+      <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+      <input type="tel" name="toPhoneNumber" />
+
+      <div>
+        <div>
+          <span>Current rate</span>
+          <span>$1 = $0.92</span>
+        </div>
+        <div>
+          <span>Total fees</span>
+          <span>$1.23</span>
+        </div>
+        <div>
+          <span>Arrival</span>
+          <span>In seconds</span>
+        </div>
+        <p>
+          Our rate (including any fees) is currently 0.14% better than the European Central Bank (ECB). This comparison
+          rate is typically one of the best available.
+        </p>
+      </div>
+
+      <Suspense fallback={<button disabled>...</button>}>
+        <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
+      </Suspense>
+
       <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
         <Dialog.Portal>
           <Dialog.Overlay />
@@ -56,22 +97,15 @@ function SendButton() {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-    </div>
+    </form>
   )
 }
 
 function Send() {
   return (
-    <div>
-      <p>You send</p>
-      <div>$1000</div>
-      <p>You receive</p>
-      <div>$1000</div>
-
-      <Suspense fallback={<p>Loading...</p>}>
-        <SendButton />
-      </Suspense>
-    </div>
+    <Suspense fallback={<p>Loading...</p>}>
+      <SendForm />
+    </Suspense>
   )
 }
 
