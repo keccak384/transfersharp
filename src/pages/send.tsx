@@ -19,7 +19,15 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
   return isLoggedIn ? (
     <ButtonComponent>Notify via SMS</ButtonComponent>
   ) : (
-    <ButtonComponent onClick={handleLogin}>Sign in to send</ButtonComponent>
+    <ButtonComponent
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        handleLogin()
+      }}
+    >
+      Sign in to send
+    </ButtonComponent>
   )
 }
 
