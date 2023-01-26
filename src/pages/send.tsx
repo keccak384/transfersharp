@@ -85,7 +85,7 @@ function SendForm() {
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
-  const handleSend = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!userData) {
       throw new Error('Not authenticated, please log in first')
@@ -113,9 +113,10 @@ function SendForm() {
   const [outputValue, setOutputValue] = useState(1000)
   const [rate] = useState(0.92)
   const onInputChange = (e: FormEvent<HTMLInputElement>) => {
-    const newPrice = (e.target.value * rate).toFixed(2)
+    const value = +e.currentTarget.value
+    const newPrice = (value * rate).toFixed(2)
     setOutputValue(parseInt(newPrice))
-    setInputValue(e.target.value)
+    setInputValue(value)
   }
 
   useEffect(() => {
