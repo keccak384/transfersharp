@@ -8,16 +8,11 @@ export type Transaction = {
   toWallet?: string
 }
 
-export const addTransaction = async (transaction: Transaction) => {
-  await fs.writeFile(`/tmp/${transaction.id}.json`, JSON.stringify(transaction))
-  return transaction
+export const getTransactionById = async (id: string): Promise<Transaction> => {
+  return JSON.parse(await fs.readFile(`/tmp/${id}.json`, 'utf8'))
 }
 
-export const getTransactionById = async (id: string) => {
-  try {
-    return JSON.parse(await fs.readFile(`/tmp/${id}.json`, 'utf8'))
-  } catch (e) {
-    console.log(`Error while reading transactions: ${e}`)
-    return null
-  }
+export const saveTransaction = async (transaction: Transaction) => {
+  await fs.writeFile(`/tmp/${transaction.id}.json`, JSON.stringify(transaction))
+  return transaction
 }

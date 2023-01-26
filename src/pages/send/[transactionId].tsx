@@ -1,12 +1,11 @@
 import * as Label from '@radix-ui/react-label'
 import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 import { FeeAmount, Pool, Route, SwapOptions, SwapRouter, Trade } from '@uniswap/v3-sdk'
-import { useAtomValue } from 'jotai'
-import { useResetAtom } from 'jotai/utils'
+import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
-import { Suspense, useState } from 'react'
+import { useRouter } from 'next/router'
+import { Suspense, useEffect } from 'react'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import {
   Button,
   FlexRowFixed,
@@ -22,7 +21,8 @@ import {
 } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
-import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+import { loginModalAtom } from '@/data/modal'
+import { isLoggedInAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
@@ -58,14 +58,13 @@ const EUROC_MAINNET = new Token(MAINNET_CHAIN_ID, '0x1aBaEA1f7C830bD89Acc67eC4af
 const SWAP_ROUTER_ADDRESS = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 
 function SendTransaction({ transaction }: { transaction: Transaction }) {
-  const didReceiverAccept = false
+  const didReceiverAccept = !!transaction.toWallet
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
-  const refreshState = useResetAtom(stateAtom)
   const magic = useAtomValue(stateAtom)
 
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
   const handleSend = async () => {
     fetchQuote(inputValue).then(async (res) => {
@@ -110,6 +109,18 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
     })
   }
 
+  // Check every 10 seconds whether there is an update to the `transaction`
+  const router = useRouter()
+  useEffect(() => {
+    if (transaction.toWallet) {
+      return
+    }
+    const id = setInterval(() => {
+      router.replace(router.asPath)
+    }, 10 * 1000)
+    return () => clearInterval(id)
+  }, [router, transaction])
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
@@ -130,7 +141,8 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
                 <PendingText>Waiting for them to join</PendingText>
               </FlexRowFixed>
               <InvitePendingMessage>
-                We will text you when the recipient joins to complete your transfer! You can safely leave this page.
+                Great! We texted them. When the recipient signs up you can complete your transfer! You can safely leave
+                this page.
               </InvitePendingMessage>
             </>
           )}
@@ -148,11 +160,6 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
             Sign in to continue
           </Button>
         )}
-        <ConnectWithPhoneDialog
-          isOpen={isLoginModalOpen}
-          setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-          onConnected={refreshState}
-        />
       </StyledSendForm>
     </PageWrapper>
   )

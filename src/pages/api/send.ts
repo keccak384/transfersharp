@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Twilio from 'twilio'
 
-import { addTransaction, Transaction } from '@/db/transactions'
+import { saveTransaction, Transaction } from '@/db/transactions'
 import { TWILIO_ACCOUNT_SID, TWILIO_PHONE, TWILIO_TOKEN } from '@/env'
 
 const client = new Twilio.Twilio(TWILIO_ACCOUNT_SID, TWILIO_TOKEN)
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     toPhoneNumber: req.body.toPhoneNumber,
   }
 
-  await addTransaction(transaction)
+  await saveTransaction(transaction)
 
   const url = `https://${req.headers.host}/receive/${transaction.id}`
 

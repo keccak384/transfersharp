@@ -1,14 +1,14 @@
 import * as Label from '@radix-ui/react-label'
-import { useAtomValue } from 'jotai'
-import { useResetAtom } from 'jotai/utils'
+import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, InvitePendingMessage, PageWrapper, SmallText } from '@/components/primitives'
-import { stateAtom, userDataAtom } from '@/data/wallet'
+import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
+import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
+import { userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 import { FlexRowFixed } from '../../components/primitives'
@@ -67,14 +67,34 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 
 function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
   const userData = useAtomValue(userDataAtom)
-  const refreshState = useResetAtom(stateAtom)
+  const router = useRouter()
 
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
+  const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
-  const onConnected = () => {
-    refreshState()
-    // @todo notify backend that user has connected
-  }
+  useEffect(() => {
+    ;(async () => {
+      if (userData && !transaction.toWallet) {
+        const response = await fetch(`/api/authorize/${transaction.id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            toWallet: userData.publicAddress,
+          }),
+        })
+
+        // Refresh `server.side` props to get fresh transaction
+        if (response.status === 200) {
+          router.replace(router.asPath)
+          return
+        }
+
+        throw new Error('Something went wrong. Please try again later.')
+      }
+    })()
+  }, [router, userData, transaction])
 
   return (
     <PageWrapper>
@@ -93,23 +113,31 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
               <BigText>EURO</BigText>
             </FlexRowFixed>
           </InviteWrapper>
-          <InvitePendingMessage>
-            {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
-          </InvitePendingMessage>
-          {userData ? (
-            <p>Connected</p>
-          ) : (
-            <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
-              Sign up to receive
-            </Button>
-          )}
 
-          <ConnectWithPhoneDialog
-            isOpen={isLoginModalOpen}
-            setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-            onConnected={onConnected}
-            phoneNumber={transaction.toPhoneNumber}
-          />
+          {userData ? (
+            <>
+              <FlexRowFixed>
+                <Spinner />
+                <PendingText>Waiting for the funds to arrive. You can close this page and come back later.</PendingText>
+              </FlexRowFixed>
+            </>
+          ) : (
+            <>
+              <InvitePendingMessage>
+                {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
+              </InvitePendingMessage>
+              <Button
+                as="a"
+                href="#"
+                onClick={() => {
+                  setLoginModalPhoneNumber(transaction.toPhoneNumber)
+                  setIsLoginModalOpen(true)
+                }}
+              >
+                Sign up to receive
+              </Button>
+            </>
+          )}
         </FlexColumn>
       </ReceiveWrapper>
     </PageWrapper>

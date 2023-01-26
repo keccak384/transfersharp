@@ -1,8 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import React, { FormEvent } from 'react'
 import { styled } from 'stitches.config'
 
+import { phoneNumberAtom } from '@/data/modal'
 import { stateAtom } from '@/data/wallet'
 
 import { Button, Input } from './primitives'
@@ -45,14 +46,13 @@ export default function ConnectWithPhoneDialog({
   isOpen,
   setIsOpen,
   onConnected,
-  phoneNumber,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
   onConnected: (phoneNumber: string) => void
-  phoneNumber?: string
 }) {
   const magic = useAtomValue(stateAtom)
+  const [phoneNumber, setPhoneNumber] = useAtom(phoneNumberAtom)
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -72,6 +72,7 @@ export default function ConnectWithPhoneDialog({
       console.log(`Error while logging in with MagicLink: ${error}`)
     } finally {
       setIsOpen(false)
+      setPhoneNumber('')
     }
   }
 
@@ -83,7 +84,12 @@ export default function ConnectWithPhoneDialog({
           <h2>Enter your phone number to get started</h2>
           <p>It has a public address and a nickname that is only visible to you.</p>
           <DialogForm onSubmit={handleLogin}>
-            <Input name="fromPhoneNumber" placeholder="+1 800 888 8888" required defaultValue={phoneNumber} />
+            <Input
+              name="fromPhoneNumber"
+              placeholder="+1 800 888 8888"
+              required
+              value={phoneNumber.length > 0 ? phoneNumber : undefined}
+            />
             <Button>Login</Button>
           </DialogForm>
         </DialogContent>

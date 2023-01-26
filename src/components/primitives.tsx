@@ -2,7 +2,7 @@ import { keyframes } from '@stitches/react'
 import { styled } from 'stitches.config'
 
 export const Button = styled('button', {
-  backgroundColor: '$gray12',
+  backgroundColor: '$blue10',
   color: '$gray1',
   border: 'none',
   padding: '16px',
