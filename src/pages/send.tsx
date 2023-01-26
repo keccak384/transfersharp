@@ -2,14 +2,14 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useAtom } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
-import { FormEvent, useState } from 'react'
+import { FormEvent, Suspense, useState } from 'react'
 
 import { isLoggedInAtom, magicAtom } from '@/data'
 
-function Send() {
+function SendButton() {
   const [magic] = useAtom(magicAtom)
   const [isLoggedIn] = useAtom(isLoggedInAtom)
-  const refreshLoginState = useResetAtom(isLoggedInAtom)
+  const refreshState = useResetAtom(magicAtom)
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -23,7 +23,7 @@ function Send() {
       }
 
       await magic.auth.loginWithEmailOTP({ email })
-      refreshLoginState()
+      refreshState()
     } catch (error) {
       console.log(`Error while logging in with MagicLink: ${error}`)
     } finally {
@@ -31,19 +31,12 @@ function Send() {
     }
   }
 
-  if (isLoggedIn === undefined) {
-    return <p>Loading...</p>
-  }
-
-  if (isLoggedIn) {
-    return <p>Logged in</p>
-  }
-
   return (
     <div>
       <a href="#" onClick={() => setIsLoginModalOpen(true)}>
         Send
       </a>
+      {isLoggedIn && <p>You are logged in</p>}
       <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
         <Dialog.Portal>
           <Dialog.Overlay />
@@ -59,7 +52,25 @@ function Send() {
   )
 }
 
-// Magic SDK doesn't work on the server side
+function Send() {
+  return (
+    <div>
+      <p>You send</p>
+      <div>$1000</div>
+      <p>You receive</p>
+      <div>$1000</div>
+
+      <Suspense fallback={<p>Loading...</p>}>
+        <SendButton />
+      </Suspense>
+    </div>
+  )
+}
+
+/**
+ * Magic doesn't work with SSR. The following code will prevent the page from being
+ * rendered on the server.
+ */
 export default dynamic(() => Promise.resolve(Send), {
   ssr: false,
 })
