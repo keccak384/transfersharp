@@ -1,11 +1,9 @@
 import * as Label from '@radix-ui/react-label'
-import { useAtomValue } from 'jotai'
-import { useResetAtom } from 'jotai/utils'
+import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense } from 'react'
 
-import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import {
   Button,
   FlexRowFixed,
@@ -21,7 +19,8 @@ import {
 } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
-import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+import { loginModalAtom } from '@/data/modal'
+import { isLoggedInAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
@@ -48,9 +47,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
-  const refreshState = useResetAtom(stateAtom)
-
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
   const handleSend = async () => {
     // @todo make an actual transaction
@@ -106,11 +103,6 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
             Sign in to continue
           </Button>
         )}
-        <ConnectWithPhoneDialog
-          isOpen={isLoginModalOpen}
-          setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-          onConnected={refreshState}
-        />
       </StyledSendForm>
     </PageWrapper>
   )
