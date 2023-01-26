@@ -33,6 +33,11 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
+  const onConnected = () => {
+    refreshState()
+    // @todo notify backend that user has connected
+  }
+
   return (
     <div style={{ padding: 40 }}>
       <h2>Pending transaction: {JSON.stringify(transaction)}</h2>
@@ -46,7 +51,7 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
       <ConnectWithPhoneDialog
         isOpen={isLoginModalOpen}
         setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
-        onConnected={() => refreshState()}
+        onConnected={onConnected}
       />
     </div>
   )
