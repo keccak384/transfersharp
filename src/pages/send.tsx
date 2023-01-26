@@ -25,8 +25,31 @@ const SendButton = styled('button', {
   cursor: 'pointer',
   width: '100%',
   '&:hover': {
-    backgroundColor: '$blue5',
+    opacity: 0.6,
   },
+})
+
+const InviteButton = styled(SendButton, {
+  backgroundColor: '$blue10',
+})
+const SuccessButton = styled(SendButton, {
+  backgroundColor: '$green9',
+})
+
+const InvitePendingMessage = styled('div', {
+  padding: '24px',
+  backgroundColor: '$blue2',
+  color: '$blue10',
+  borderRadius: '24px',
+})
+
+const SmallText = styled('span', {
+  fontSize: '$2',
+  color: '$gray9',
+})
+
+const PendingText = styled(SmallText, {
+  color: '$blue10',
 })
 
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
@@ -110,7 +133,7 @@ const FlexRow = styled('div', {
   gap: '$2',
 })
 
-const DarkText = styled('span', { color: '$gray11' })
+const DarkText = styled('span', { color: '$gray12' })
 
 const DialogOverlay = styled(Dialog.Overlay, {
   position: 'fixed',
@@ -209,6 +232,19 @@ function SendForm() {
     setOutputValue(parseInt(newPrice))
   }, [inputValue, rate])
 
+  const [needsInvite, setNeedsInvite] = useState(true)
+  const [inviteSent, setInviteSent] = useState(false)
+  const [invitePending, setInvitePending] = useState(false)
+
+  const handleInvite = async (e) => {
+    e.preventDefault()
+    setInviteSent(true)
+    setTimeout(() => {
+      setNeedsInvite(false)
+      setInvitePending(true)
+    }, 1200)
+  }
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
@@ -250,12 +286,32 @@ function SendForm() {
             </FlexRow>
           </FlexRow>
         </InputWrapper>
-        {userData ? (
+        {/* This field should appear when the user has logged in */}
+        {!userData && (
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
             <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+            {needsInvite && (
+              <>
+                <SmallText>This number hasn’t signed up yet</SmallText>
+                {inviteSent ? (
+                  <SuccessButton>Invite Sent!</SuccessButton>
+                ) : (
+                  <InviteButton onClick={handleInvite}>Invite via SMS</InviteButton>
+                )}
+              </>
+            )}
+            {invitePending && (
+              <>
+                <PendingText>Waiting for them to join</PendingText>
+                <InvitePendingMessage>
+                  We will text you when the recipient joins to complete your transfer! You can safely leave this page.
+                </InvitePendingMessage>
+              </>
+            )}
           </InputWrapper>
-        ) : null}
+        )}
+
         <TransactionDetails>
           <FlexRow>
             <span>Current rate</span>
