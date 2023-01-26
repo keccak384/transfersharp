@@ -2,7 +2,7 @@ import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 
 import {
   Button,
