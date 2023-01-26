@@ -5,10 +5,10 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input, InputWrapper, PageWrapper, PendingButton } from '@/components/primitives'
+import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
+import TransactionDetails from '@/components/TransactionDetails'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
@@ -22,23 +22,6 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
     <ButtonComponent onClick={handleLogin}>Sign in to send</ButtonComponent>
   )
 }
-
-const StyledSendForm = styled('form', {
-  fontSize: '$3',
-  border: '0',
-  maxWidth: '420px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$1',
-})
-
-const TransactionDetails = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$2',
-  color: '$gray10',
-  padding: '16px',
-})
 
 function SendForm() {
   const userData = useAtomValue(userDataAtom)

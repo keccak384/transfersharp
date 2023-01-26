@@ -1,11 +1,26 @@
 import * as Label from '@radix-ui/react-label'
+import { useAtomValue } from 'jotai'
+import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 
 import { styled } from '@/../stitches.config'
-import { Button, FlexRowFixed, Input, PageWrapper, PendingButton, Spinner } from '@/components/primitives'
+import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
+import {
+  Button,
+  FlexRowFixed,
+  Input,
+  InputWrapper,
+  PageWrapper,
+  PendingButton,
+  PendingText,
+  Spinner,
+  StyledSendForm,
+  SuccessText,
+} from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
+import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
@@ -27,25 +42,6 @@ export async function getServerSideProps({ params: { transactionId } }: { params
   }
 }
 
-const StyledSendForm = styled('form', {
-  fontSize: '$3',
-  border: '0',
-  maxWidth: '420px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$1',
-})
-
-const InputWrapper = styled('div', {
-  padding: '24px',
-  border: '1px solid $gray5',
-  borderRadius: '20px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '$2',
-  color: '$gray12',
-})
-
 const InvitePendingMessage = styled('p', {
   padding: '24px',
   backgroundColor: '$blue2',
@@ -53,22 +49,14 @@ const InvitePendingMessage = styled('p', {
   borderRadius: '24px',
 })
 
-const SmallText = styled('span', {
-  fontSize: '$1',
-  color: '$gray9',
-})
-
-const PendingText = styled(SmallText, {
-  color: '$blue10',
-})
-
-const SuccessText = styled(SmallText, {
-  color: '$green9',
-})
-
 function SendTransaction({ transaction }: { transaction: Transaction }) {
   const didReceiverAccept = false
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
+
+  const isLoggedIn = useAtomValue(isLoggedInAtom)
+  const refreshState = useResetAtom(stateAtom)
+
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   const handleSend = async () => {
     // @todo make an actual transaction
@@ -100,7 +88,23 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
           )}
         </InputWrapper>
         <TransactionDetails />
-        <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
+        {isLoggedIn ? (
+          <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
+        ) : (
+          <Button
+            onClick={(e) => {
+              e.preventDefault()
+              setIsLoginModalOpen(true)
+            }}
+          >
+            Sign in to continue
+          </Button>
+        )}
+        <ConnectWithPhoneDialog
+          isOpen={isLoginModalOpen}
+          setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
+          onConnected={refreshState}
+        />
       </StyledSendForm>
     </PageWrapper>
   )

@@ -104,3 +104,25 @@ export const PageWrapper = styled('div', {
   color: 'black',
   padding: '0 0 50px',
 })
+
+export const StyledSendForm = styled('form', {
+  fontSize: '$3',
+  border: '0',
+  maxWidth: '420px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '$1',
+})
+
+export const SmallText = styled('span', {
+  fontSize: '$1',
+  color: '$gray9',
+})
+
+export const PendingText = styled(SmallText, {
+  color: '$blue10',
+})
+
+export const SuccessText = styled(SmallText, {
+  color: '$green9',
+})
