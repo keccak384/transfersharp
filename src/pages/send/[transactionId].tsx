@@ -1,9 +1,9 @@
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
-  const transcation = await getTransactionById(transactionId)
+  const transaction = await getTransactionById(transactionId)
 
-  if (!transcation) {
+  if (!transaction) {
     return {
       redirect: {
         destination: '/',
@@ -14,7 +14,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 
   return {
     props: {
-      transcation,
+      transaction,
     },
   }
 }
@@ -22,7 +22,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 export default function SendTransaction({ transaction }: { transaction: Transaction }) {
   return (
     <div style={{ padding: 40 }}>
-      <h2>Pending transaction: {transaction.id}</h2>
+      <h2>Pending transaction: {JSON.stringify(transaction)}</h2>
     </div>
   )
 }
