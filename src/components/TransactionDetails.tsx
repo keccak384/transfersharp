@@ -17,7 +17,7 @@ export default function TransactionDetails() {
   const inputValue = useAtomValue(inputValueAtom)
   const outputValue = useAtomValue(outputValueAtom)
 
-  const rate = Math.round((outputValue / inputValue) * 100) / 100
+  const rate = outputValue ? Math.round((outputValue / inputValue) * 100) / 100 : '...'
 
   return (
     <Wrapper>

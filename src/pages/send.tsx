@@ -9,6 +9,7 @@ import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
+import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
