@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 
 import { styled } from '@/../stitches.config'
-import { Button, FlexRowFixed, Input, PendingButton, Spinner } from '@/components/primitives'
+import { Button, FlexRowFixed, Input, PageWrapper, PendingButton, Spinner } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { getTransactionById, Transaction } from '@/db/transactions'
@@ -26,17 +26,6 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     },
   }
 }
-
-const PageWrapper = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  alignSelf: 'center',
-  margin: 'auto',
-  backgroundColor: 'white',
-  color: 'black',
-})
 
 const StyledSendForm = styled('form', {
   fontSize: '$3',

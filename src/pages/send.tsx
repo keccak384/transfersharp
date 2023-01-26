@@ -7,7 +7,7 @@ import { FormEvent, Suspense, useState } from 'react'
 
 import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input, InputWrapper, PendingButton } from '@/components/primitives'
+import { Button, Input, InputWrapper, PageWrapper, PendingButton } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
@@ -22,16 +22,6 @@ function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => vo
     <ButtonComponent onClick={handleLogin}>Sign in to send</ButtonComponent>
   )
 }
-
-const PageWrapper = styled('div', {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  alignSelf: 'center',
-  margin: 'auto',
-  backgroundColor: 'white',
-  color: 'black',
-})
 
 const StyledSendForm = styled('form', {
   fontSize: '$3',

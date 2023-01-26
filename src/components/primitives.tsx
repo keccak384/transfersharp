@@ -92,3 +92,15 @@ export const Spinner = styled('span', {
   boxSizing: 'border-box',
   animation: `${spin} 1000ms ease-in-out infinite`,
 })
+
+export const PageWrapper = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  alignSelf: 'center',
+  margin: 'auto',
+  backgroundColor: 'white',
+  color: 'black',
+  padding: '0 0 50px',
+})
