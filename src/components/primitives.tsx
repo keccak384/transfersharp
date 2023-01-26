@@ -17,7 +17,7 @@ export const SendButton = styled('button', {
   },
 })
 
-export const StyledInput = styled('input', {
+export const Input = styled('input', {
   display: 'flex',
   flexDirection: 'column',
   gap: '12px',

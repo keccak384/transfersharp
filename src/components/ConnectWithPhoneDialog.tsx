@@ -5,7 +5,7 @@ import { styled } from 'stitches.config'
 
 import { stateAtom } from '@/data/wallet'
 
-import { SendButton, StyledInput } from './primitives'
+import { Input, SendButton } from './primitives'
 
 const DialogOverlay = styled(Dialog.Overlay, {
   position: 'fixed',
@@ -79,7 +79,7 @@ export default function ConnectWithPhoneDialog({
           </h2>
           <p>It has a public address and a nickname that is only visible to you.</p>
           <DialogForm onSubmit={handleLogin}>
-            <StyledInput name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
+            <Input name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
             <SendButton>Login</SendButton>
           </DialogForm>
         </DialogContent>

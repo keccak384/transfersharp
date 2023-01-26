@@ -1,4 +1,3 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import * as Label from '@radix-ui/react-label'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
@@ -10,7 +9,7 @@ import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { SendButton, StyledInput } from '@/components/primitives'
+import { Input, SendButton } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
@@ -79,30 +78,6 @@ const FlexRow = styled('div', {
 
 const DarkText = styled('span', { color: '$gray11' })
 
-const DialogOverlay = styled(Dialog.Overlay, {
-  position: 'fixed',
-  inset: '0',
-  backgroundColor: '#00000040',
-  animation: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-})
-
-const DialogContent = styled(Dialog.Content, {
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90vw',
-  maxWidth: '450px',
-  maxHeight: '85vh',
-  backgroundColor: 'white',
-  borderRadius: '20px',
-  animation: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-  padding: '25px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-})
-
 function SendForm() {
   const userData = useAtomValue(userDataAtom)
   const refreshState = useResetAtom(stateAtom)
@@ -156,7 +131,7 @@ function SendForm() {
           <Label.Root htmlFor="youSendValue">You send</Label.Root>
           <FlexRow>
             <CurrencySymbolWrapper>$</CurrencySymbolWrapper>
-            <StyledInput
+            <Input
               name="youSendValue"
               placeholder="1000"
               pattern="[0-9]*"
@@ -175,7 +150,7 @@ function SendForm() {
           <Label.Root htmlFor="youSendValue">They receive</Label.Root>
           <FlexRow>
             <CurrencySymbolWrapper>€</CurrencySymbolWrapper>
-            <StyledInput
+            <Input
               name="youReceiveValue"
               placeholder="€920.26"
               pattern="[0-9]*"
@@ -193,7 +168,7 @@ function SendForm() {
         {userData ? (
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-            <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+            <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
           </InputWrapper>
         ) : null}
         <TransactionDetails>
