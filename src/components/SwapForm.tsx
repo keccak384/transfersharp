@@ -1,6 +1,5 @@
 import * as Label from '@radix-ui/react-label'
 import { useAtom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
 import Image from 'next/image'
 import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
