@@ -130,6 +130,7 @@ function SendForm() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    e.stopPropagation()
 
     try {
       const phoneNumber = new FormData(e.currentTarget).get('phone')?.toString()
@@ -138,7 +139,9 @@ function SendForm() {
         throw new Error('Phone is required')
       }
 
-      await magic.auth.loginWithSMS({ phoneNumber })
+      // @todo replace with SMS once Magic is fixed
+      await magic.auth.loginWithEmailOTP({ email: phoneNumber })
+
       refreshState()
     } catch (error) {
       console.log(`Error while logging in with MagicLink: ${error}`)
@@ -220,7 +223,7 @@ function SendForm() {
               </h2>
               <p>It has a public address and a nickname that is only visible to you.</p>
               <form onSubmit={handleLogin}>
-                <input type="tel" name="phone" required />
+                <input name="phone" required />
                 <SendButton>Login</SendButton>
               </form>
             </DialogContent>
