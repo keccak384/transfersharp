@@ -2,10 +2,16 @@ import * as Label from '@radix-ui/react-label'
 import { useAtom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
 import { FlexRow, Input, InputWrapper } from './primitives'
+
+function fetchQuote(amount: number) {
+  return fetch(
+    `https://jnru9d0d29.execute-api.us-east-1.amazonaws.com/prod/quote?tokenInAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&tokenInChainId=1&tokenOutAddress=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&tokenOutChainId=1&amount=${amount}&type=exactIn`
+  )
+}
 
 const CurrencySymbolWrapper = styled('div', {
   fontSize: '42px',
@@ -20,12 +26,13 @@ export default function SwapForm() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom)
   const [outputValue, setOutputValue] = useAtom(outputValueAtom)
 
-  const [rate] = useState(0.92)
-
   useEffect(() => {
-    const newPrice = (inputValue * rate).toFixed(2)
-    setOutputValue(parseInt(newPrice))
-  }, [inputValue, rate, setOutputValue])
+    // Update the document title using the browser API
+    fetchQuote(inputValue).then(async (res) => {
+      const json = await res.json()
+      setOutputValue(json.quote)
+    })
+  }, [inputValue, setOutputValue])
 
   return (
     <>
