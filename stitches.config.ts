@@ -26,7 +26,7 @@ export const { styled, getCssText } = createStitches({
   },
 })
 
-export const globalStyles = globalCss({
+const globalStyles = globalCss({
   '*': { margin: 0, padding: 0, boxSizing: 'border-box' },
   input: {
     appearance: 'textfield',
@@ -48,3 +48,5 @@ export const globalStyles = globalCss({
     textDecoration: 'none',
   },
 })
+
+globalStyles()
