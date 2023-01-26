@@ -133,14 +133,13 @@ function SendForm() {
     e.stopPropagation()
 
     try {
-      const phoneNumber = new FormData(e.currentTarget).get('phone')?.toString()
+      const phoneNumber = new FormData(e.currentTarget).get('fromPhoneNumber')?.toString()
 
       if (!phoneNumber) {
         throw new Error('Phone is required')
       }
 
-      // @todo replace with SMS once Magic is fixed
-      await magic.auth.loginWithEmailOTP({ email: phoneNumber })
+      await magic.auth.loginWithSMS({ phoneNumber })
 
       refreshState()
     } catch (error) {
@@ -223,7 +222,7 @@ function SendForm() {
               </h2>
               <p>It has a public address and a nickname that is only visible to you.</p>
               <form onSubmit={handleLogin}>
-                <input name="phone" required />
+                <input name="fromPhoneNumber" type="tel" placeholder="+1 800 888 8888" required />
                 <SendButton>Login</SendButton>
               </form>
             </DialogContent>
