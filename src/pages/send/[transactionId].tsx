@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 
 import { styled } from '@/../stitches.config'
-import { Button, FlexRowFixed, Input, Spinner } from '@/components/primitives'
+import { Button, FlexRowFixed, Input, PendingButton, Spinner } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { getTransactionById, Transaction } from '@/db/transactions'
@@ -73,7 +73,14 @@ const PendingText = styled(SmallText, {
   color: '$blue10',
 })
 
+const SuccessText = styled(SmallText, {
+  color: '$green9',
+})
+
 function SendTransaction({ transaction }: { transaction: Transaction }) {
+  const didReceiverAccept = true
+  const ButtonComponent = didReceiverAccept ? Button : PendingButton
+
   const handleSend = async () => {
     // @todo make an actual transaction
   }
@@ -85,16 +92,26 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
         <InputWrapper>
           <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
           <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" value="18455980032" disabled />
-          <FlexRowFixed>
-            <Spinner />
-            <PendingText>Waiting for them to join</PendingText>
-          </FlexRowFixed>
-          <InvitePendingMessage>
-            We will text you when the recipient joins to complete your transfer! You can safely leave this page.
-          </InvitePendingMessage>
+          {didReceiverAccept ? (
+            <>
+              <FlexRowFixed>
+                <SuccessText>You are good to go!</SuccessText>
+              </FlexRowFixed>
+            </>
+          ) : (
+            <>
+              <FlexRowFixed>
+                <Spinner />
+                <PendingText>Waiting for them to join</PendingText>
+              </FlexRowFixed>
+              <InvitePendingMessage>
+                We will text you when the recipient joins to complete your transfer! You can safely leave this page.
+              </InvitePendingMessage>
+            </>
+          )}
         </InputWrapper>
         <TransactionDetails />
-        <Button>Send</Button>
+        <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
       </StyledSendForm>
     </PageWrapper>
   )
