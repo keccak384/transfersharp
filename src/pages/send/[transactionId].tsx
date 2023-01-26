@@ -1,6 +1,7 @@
 import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import { Suspense } from 'react'
 
 import {
@@ -51,6 +52,18 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
   const handleSend = async () => {
     // @todo make an actual transaction
   }
+
+  // Check every 10 seconds whether there is an update to the `transaction`
+  const router = useRouter()
+  useEffect(() => {
+    if (transaction.toWallet) {
+      return
+    }
+    const id = setInterval(() => {
+      router.replace(router.asPath)
+    }, 10 * 1000)
+    return () => clearInterval(id)
+  }, [router, transaction])
 
   return (
     <PageWrapper>
