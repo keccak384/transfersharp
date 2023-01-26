@@ -1,4 +1,3 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import * as Label from '@radix-ui/react-label'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
@@ -9,35 +8,20 @@ import { FormEvent, Suspense, useState } from 'react'
 import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
+import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
+import { Button, Input } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
-
-const SendButton = styled('button', {
-  backgroundColor: '$gray12',
-  color: '$gray1',
-  border: 'none',
-  padding: '16px',
-  borderRadius: '40px',
-  textAlign: 'center',
-  fontSize: '20px',
-  fontWeight: '500',
-  display: 'inline-block',
-  cursor: 'pointer',
-  width: '100%',
-  '&:hover': {
-    backgroundColor: '$blue5',
-  },
-})
 
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
   return isLoggedIn ? (
-    <SendButton>Send</SendButton>
+    <Button>Send</Button>
   ) : (
-    <SendButton as="a" href="#" onClick={handleLogin}>
+    <Button as="a" href="#" onClick={handleLogin}>
       Sign in to send
-    </SendButton>
+    </Button>
   )
 }
 
@@ -70,24 +54,6 @@ const InputWrapper = styled('div', {
   color: '$gray12',
 })
 
-const StyledInput = styled('input', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-  backgroundColor: 'transparent',
-  border: 'none',
-  fontSize: '42px',
-  appearance: 'none',
-  color: '$gray12',
-  width: '100%',
-  '&::placeholder': {
-    color: '$gray5',
-  },
-  '&:focus': {
-    outline: 'none',
-  },
-})
-
 const CurrencySymbolWrapper = styled('div', {
   fontSize: '42px',
 
@@ -112,63 +78,12 @@ const FlexRow = styled('div', {
 
 const DarkText = styled('span', { color: '$gray11' })
 
-const DialogOverlay = styled(Dialog.Overlay, {
-  position: 'fixed',
-  inset: '0',
-  backgroundColor: '#00000040',
-  animation: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-})
-
-const DialogContent = styled(Dialog.Content, {
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '90vw',
-  maxWidth: '450px',
-  maxHeight: '85vh',
-  backgroundColor: 'white',
-  borderRadius: '20px',
-  animation: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
-  padding: '25px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-})
-
-const DialogForm = styled('form', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px',
-})
-
 function SendForm() {
-  const magic = useAtomValue(stateAtom)
   const userData = useAtomValue(userDataAtom)
   const refreshState = useResetAtom(stateAtom)
   const router = useRouter()
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    try {
-      const phoneNumber = new FormData(e.currentTarget).get('fromPhoneNumber')?.toString()
-
-      if (!phoneNumber) {
-        throw new Error('Phone is required')
-      }
-
-      await magic.auth.loginWithSMS({ phoneNumber })
-
-      refreshState()
-    } catch (error) {
-      console.log(`Error while logging in with MagicLink: ${error}`)
-    } finally {
-      setIsLoginModalOpen(false)
-    }
-  }
 
   const handleSend = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
@@ -216,7 +131,7 @@ function SendForm() {
           <Label.Root htmlFor="youSendValue">You send</Label.Root>
           <FlexRow>
             <CurrencySymbolWrapper>$</CurrencySymbolWrapper>
-            <StyledInput
+            <Input
               name="youSendValue"
               placeholder="1000"
               pattern="[0-9]*"
@@ -235,7 +150,7 @@ function SendForm() {
           <Label.Root htmlFor="youSendValue">They receive</Label.Root>
           <FlexRow>
             <CurrencySymbolWrapper>€</CurrencySymbolWrapper>
-            <StyledInput
+            <Input
               name="youReceiveValue"
               placeholder="€920.26"
               pattern="[0-9]*"
@@ -253,7 +168,7 @@ function SendForm() {
         {userData ? (
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-            <StyledInput type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+            <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
           </InputWrapper>
         ) : null}
         <TransactionDetails>
@@ -274,25 +189,15 @@ function SendForm() {
             comparison rate is typically one of the best available.
           </p>
         </TransactionDetails>
-        <Suspense fallback={<SendButton disabled>...</SendButton>}>
+        <Suspense fallback={<Button disabled>...</Button>}>
           <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
 
-        <Dialog.Root open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-          <Dialog.Portal>
-            <DialogOverlay />
-            <DialogContent>
-              <h2>
-                Enter your <span>phone number</span> to get started
-              </h2>
-              <p>It has a public address and a nickname that is only visible to you.</p>
-              <DialogForm onSubmit={handleLogin}>
-                <StyledInput name="fromPhoneNumber" placeholder="+1 800 888 8888" required />
-                <SendButton>Login</SendButton>
-              </DialogForm>
-            </DialogContent>
-          </Dialog.Portal>
-        </Dialog.Root>
+        <ConnectWithPhoneDialog
+          isOpen={isLoginModalOpen}
+          setIsOpen={(isOpen) => setIsLoginModalOpen(isOpen)}
+          onConnected={refreshState}
+        />
       </StyledSendForm>
     </PageWrapper>
   )
