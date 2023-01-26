@@ -3,9 +3,10 @@ import * as Label from '@radix-ui/react-label'
 import { useAtomValue } from 'jotai'
 import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
-import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 
 function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
@@ -21,7 +22,9 @@ function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
 
 function SendForm() {
   const magic = useAtomValue(stateAtom)
+  const userData = useAtomValue(userDataAtom)
   const refreshState = useResetAtom(stateAtom)
+  const router = useRouter()
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -45,7 +48,10 @@ function SendForm() {
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(`Sending...`)
+    if (!userData) {
+      throw new Error('Not authenticated, please log in first')
+    }
+    router.push(`/receive/${userData.publicAddress}`)
   }
 
   return (
