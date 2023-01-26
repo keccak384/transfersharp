@@ -20,6 +20,7 @@ const SendButton = styled('button', {
   fontSize: '20px',
   fontWeight: '500',
   display: 'inline-block',
+  cursor: 'pointer',
   '&:hover': {
     backgroundColor: '$blue5',
   },
