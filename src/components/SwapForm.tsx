@@ -5,6 +5,7 @@ import Image from 'next/image'
 import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
+import { inputValueAtom, outputValueAtom } from '../data/swap'
 import { FlexRow, Input, InputWrapper } from './primitives'
 
 function fetchQuote(amount: number) {
@@ -19,8 +20,6 @@ const CurrencySymbolWrapper = styled('div', {
   color: '$gray12',
 })
 
-export const inputValueAtom = atomWithStorage('currencyInputValue', 1000)
-export const outputValueAtom = atomWithStorage('currencyOutputValue', undefined)
 
 export default function SwapForm() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom)

@@ -2,8 +2,8 @@ import { useAtomValue } from 'jotai'
 import React from 'react'
 import { styled } from 'stitches.config'
 
+import { inputValueAtom, outputValueAtom } from '../data/swap'
 import { DarkText, FlexRow } from './primitives'
-import { inputValueAtom, outputValueAtom } from './SwapForm'
 
 const Wrapper = styled('div', {
   display: 'flex',
