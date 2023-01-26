@@ -1,6 +1,6 @@
 import { styled } from 'stitches.config'
 
-export const SendButton = styled('button', {
+export const Button = styled('button', {
   backgroundColor: '$gray12',
   color: '$gray1',
   border: 'none',

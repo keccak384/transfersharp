@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { useState } from 'react'
 
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { SendButton } from '@/components/primitives'
+import { Button } from '@/components/primitives'
 import { stateAtom, userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
@@ -44,9 +44,9 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
       {userData ? (
         <p>Connected</p>
       ) : (
-        <SendButton as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
+        <Button as="a" href="#" onClick={() => setIsLoginModalOpen(true)}>
           Sign in to send
-        </SendButton>
+        </Button>
       )}
       <ConnectWithPhoneDialog
         isOpen={isLoginModalOpen}

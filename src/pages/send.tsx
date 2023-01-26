@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Input, SendButton } from '@/components/primitives'
+import { Button, Input } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
@@ -17,11 +17,11 @@ function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
   return isLoggedIn ? (
-    <SendButton>Send</SendButton>
+    <Button>Send</Button>
   ) : (
-    <SendButton as="a" href="#" onClick={handleLogin}>
+    <Button as="a" href="#" onClick={handleLogin}>
       Sign in to send
-    </SendButton>
+    </Button>
   )
 }
 
@@ -189,7 +189,7 @@ function SendForm() {
             comparison rate is typically one of the best available.
           </p>
         </TransactionDetails>
-        <Suspense fallback={<SendButton disabled>...</SendButton>}>
+        <Suspense fallback={<Button disabled>...</Button>}>
           <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
 
