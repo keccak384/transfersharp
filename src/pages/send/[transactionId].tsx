@@ -3,7 +3,11 @@ import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 
 import { styled } from '@/../stitches.config'
+<<<<<<< HEAD
 import { Button, FlexRowFixed, Input, PendingButton, Spinner } from '@/components/primitives'
+=======
+import { Button, FlexRowFixed, Input, Spinner } from '@/components/primitives'
+>>>>>>> main
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { getTransactionById, Transaction } from '@/db/transactions'
