@@ -9,7 +9,7 @@ export default function Completed() {
 
   return (
     <div style={{ padding: 40 }}>
-      <h2>You've received money from {walletAddress}</h2>
+      <h2>You received money from {walletAddress}</h2>
     </div>
   )
 }
