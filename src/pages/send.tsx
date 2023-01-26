@@ -6,19 +6,19 @@ import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import {
-  Button,
-  Input,
-  InputWrapper,
-  InvitePendingMessage,
-  PageWrapper,
-  PendingButton,
-  StyledSendForm,
-} from '@/components/primitives'
+import { Button, Input, InputWrapper, PageWrapper, PendingButton, StyledSendForm } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
+
+import { SmallText } from '../components/primitives'
+
+function InviteButton({ disabled = false }: { disabled?: boolean }) {
+  const ButtonComponent = disabled ? PendingButton : Button
+
+  return <ButtonComponent>Invite via SMS</ButtonComponent>
+}
 
 function SubmitButton({ handleLogin, disabled = false }: { handleLogin: () => void; disabled?: boolean }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
@@ -89,15 +89,15 @@ function SendForm() {
               name="toPhoneNumber"
               placeholder="+1 800 888 8888"
             />
-            <InvitePendingMessage>
-              {`If your recipient hasn't used yet don't worry! We'll text them an invite to join.`}
-            </InvitePendingMessage>
-            {phoneNumber.length !== 0 && <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />}
+            <SmallText>
+              {`You can send to any phone number. We'll text them an invite to join to receive the funds.`}
+            </SmallText>
+            {phoneNumber.length !== 0 && <InviteButton />}
           </InputWrapper>
         )}
         <TransactionDetails />
         <Suspense fallback={<Button disabled>...</Button>}>
-          <SubmitButton disabled={phoneNumber.length === 0} handleLogin={() => setIsLoginModalOpen(true)} />
+          <SubmitButton disabled={true} handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
         <ConnectWithPhoneDialog
           isOpen={isLoginModalOpen}
