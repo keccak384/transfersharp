@@ -9,15 +9,19 @@ import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input } from '@/components/primitives'
+import { Button, Input, PendingButton } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
-function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
+function SubmitButton({ handleLogin, isEnabled }: { handleLogin: () => void; isEnabled: boolean }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
   return isLoggedIn ? (
-    <Button>Send</Button>
+    isEnabled ? (
+      <Button>Send</Button>
+    ) : (
+      <PendingButton>Send</PendingButton>
+    )
   ) : (
     <Button as="a" href="#" onClick={handleLogin}>
       Sign in to send
@@ -124,6 +128,11 @@ function SendForm() {
     setOutputValue(parseInt(newPrice))
   }, [inputValue, rate])
 
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const onPhoneNumberChange = (e: FormEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.target.value)
+  }
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
@@ -168,7 +177,7 @@ function SendForm() {
         {userData ? (
           <InputWrapper>
             <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-            <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
+            <Input onChange={onPhoneNumberChange} type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
           </InputWrapper>
         ) : null}
         <TransactionDetails>
@@ -190,7 +199,7 @@ function SendForm() {
           </p>
         </TransactionDetails>
         <Suspense fallback={<Button disabled>...</Button>}>
-          <SubmitButton handleLogin={() => setIsLoginModalOpen(true)} />
+          <SubmitButton isEnabled={phoneNumber !== ''} handleLogin={() => setIsLoginModalOpen(true)} />
         </Suspense>
 
         <ConnectWithPhoneDialog

@@ -9,9 +9,8 @@ import { useEffect } from 'react'
 
 import { styled } from '@/../stitches.config'
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
-import { Button, Input } from '@/components/primitives'
+import { Button, Input, PendingButton } from '@/components/primitives'
 import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
-import type { Transaction } from '@/db/transactions'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
@@ -37,7 +36,7 @@ function SubmitButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
   return isLoggedIn ? (
-    <Button>Send</Button>
+    <PendingButton>Send</PendingButton>
   ) : (
     <Button as="a" href="#" onClick={handleLogin}>
       Sign in to send
@@ -145,9 +144,11 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
     setOutputValue(parseInt(newPrice))
   }, [inputValue, rate])
 
+  console.log(transaction)
+
   return (
     <PageWrapper>
-      <h2>Pending transaction: {JSON.stringify(transaction)}</h2>
+      <small>{JSON.stringify(transaction)}</small>
       <StyledSendForm onSubmit={handleSend}>
         <InputWrapper>
           <Label.Root htmlFor="youSendValue">You send</Label.Root>
@@ -187,12 +188,12 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
             </FlexRow>
           </FlexRow>
         </InputWrapper>
-        {userData && transaction ? (
-          <InputWrapper>
-            <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
-            <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" />
-          </InputWrapper>
-        ) : null}
+        <InputWrapper>
+          <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
+          <Input type="tel" name="toPhoneNumber" placeholder="+1 800 888 8888" value="18455980032" />
+          <h3>INPUT PENDING</h3>
+          <p>We will text you when the recipient joins to complete your transfer! You can safely leave this page.</p>
+        </InputWrapper>
         <TransactionDetails>
           <FlexRow>
             <span>Current rate</span>
