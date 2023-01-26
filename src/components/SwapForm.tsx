@@ -1,4 +1,7 @@
 import * as Label from '@radix-ui/react-label'
+import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
+import { Pool, FeeAmount, Route } from '@uniswap/v3-sdk'
+// import { Trade } from '@uniswap/router-sdk'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
 import React, { useEffect } from 'react'
@@ -6,6 +9,22 @@ import { styled } from 'stitches.config'
 
 import { inputValueAtom, outputValueAtom } from '../data/swap'
 import { FlexRow, Input, InputWrapper } from './primitives'
+
+const USDC_MAINNET = new Token(
+  1,
+  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+  6,
+  'USDC',
+  'USD//C'
+)
+
+const EUROC_MAINNET = new Token(
+  1,
+  '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c',
+  6,
+  'EUROC',
+  'EURO//C'
+)
 
 function fetchQuote(amount: number) {
   return fetch(
@@ -27,6 +46,15 @@ export default function SwapForm() {
     // Update the document title using the browser API
     fetchQuote(inputValue).then(async (res) => {
       const json = await res.json()
+      console.log(USDC_MAINNET, EUROC_MAINNET, FeeAmount.LOW, json.route[0][0]?.sqrtRatioX96, json.route[0][0]?.liquidity, parseInt(json.route[0][0]?.tickCurrent))
+      const pool = new Pool(USDC_MAINNET, EUROC_MAINNET, FeeAmount.LOW, json.route[0][0]?.sqrtRatioX96, json.route[0][0]?.liquidity, parseInt(json.route[0][0]?.tickCurrent)) 
+
+      const route = new Route([pool], USDC_MAINNET, EUROC_MAINNET)
+      const amount = CurrencyAmount.fromRawAmount(USDC_MAINNET, inputValue)
+      console.log(amount)
+      const trade = await Trade.fromRoute(route, amount, TradeType.EXACT_INPUT)
+
+      console.log(trade)
       setOutputValue(json.quote)
     })
   }, [inputValue, setOutputValue])
