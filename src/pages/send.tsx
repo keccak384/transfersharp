@@ -103,7 +103,7 @@ function SendForm() {
     const web3 = new Web3(magic.rpcProvider)
     const fromAddress = (await web3.eth.getAccounts())[0]
 
-    const destination = '0x4defA30195094963cFAc7285d8d6E6E523c7f90D'
+    const destination = fromAddress
     const amount = web3.utils.toWei('0.001') // Convert 1 ether to wei
 
     // Submit transaction to the blockchain and wait for it to be mined
@@ -386,7 +386,7 @@ function SendForm() {
       {/* This button approves USDC for the input amount and swaps it for  EUROC to self */}
       <Button onClick={SwapTokens}>Approve and Swap</Button>
       {/* This button sends EUROC to self */}
-      <Button onClick={SendTransaction}>Send EUR to self</Button>
+      <Button onClick={SendTransaction}>Send 001 ETH to self (proof of send)</Button>
 
       {/* Both of these can be wrapped together in the functions above since they don't need to be signed */}
 
