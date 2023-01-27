@@ -1,10 +1,9 @@
-// pages/users/[uid].js
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { styled } from 'stitches.config'
 
 import { Button, FlexRowFixed, PageWrapper, SmallText } from '@/components/primitives'
-import { getTransactionById, Transaction } from '@/db/transactions'
+import { CompletedTransaction, getTransactionById, isCompletedTransaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -18,14 +17,14 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     }
   }
 
-  // if (!transaction.hash) {
-  //   return {
-  //     redirect: {
-  //       destination: `/receive/${transaction.id}`,
-  //       permanent: false,
-  //     },
-  //   }
-  // }
+  if (!isCompletedTransaction(transaction)) {
+    return {
+      redirect: {
+        destination: `/receive/${transaction.id}`,
+        permanent: false,
+      },
+    }
+  }
 
   return {
     props: {
@@ -77,7 +76,7 @@ const Received = styled('div', {
   flexDirection: 'column',
 })
 
-function Withdraw({ transaction }: { transaction: Transaction }) {
+export default function Withdraw({ transaction }: { transaction: CompletedTransaction }) {
   return (
     <PageWrapper>
       <ReceiveWrapper>

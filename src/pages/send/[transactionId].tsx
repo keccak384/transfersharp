@@ -22,7 +22,14 @@ import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { quoteAtom } from '@/data/swap'
 import { isLoggedInAtom, web3Atom } from '@/data/wallet'
-import { getTransactionById, Transaction } from '@/db/transactions'
+import {
+  AuthorizedTransaction,
+  BaseTransaction,
+  getTransactionById,
+  isAuthorizedTransaction,
+  isCompletedTransaction,
+  Transaction,
+} from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -36,7 +43,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     }
   }
 
-  if (transaction.hash) {
+  if (isCompletedTransaction(transaction)) {
     return {
       redirect: {
         destination: `/completed/${transaction.id}`,
@@ -52,8 +59,8 @@ export async function getServerSideProps({ params: { transactionId } }: { params
   }
 }
 
-function SendTransaction({ transaction }: { transaction: Transaction }) {
-  const didReceiverAccept = !!transaction.toWallet
+function SendTransaction({ transaction }: { transaction: BaseTransaction | AuthorizedTransaction }) {
+  const didReceiverAccept = isAuthorizedTransaction(transaction)
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
@@ -69,7 +76,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
     // @todo Load ETH and USDC via Moonpay
 
     // Check whether we have an active swap quote
-    if (!swapQuote || !transaction.toWallet) {
+    if (!swapQuote || !didReceiverAccept) {
       throw new Error('No swap quote found. Please go back and try again.')
     }
 
@@ -102,6 +109,10 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
         },
         body: JSON.stringify({
           hash: receipt.transactionHash,
+          buyAmount: swapQuote.buyAmount,
+          sellAmount: swapQuote.sellAmount,
+          buyTokenAddress: swapQuote.buyTokenAddress,
+          sellTokenAddress: swapQuote.sellTokenAddress,
         }),
       })
       router.push(`/completed/${transaction.id}`)
@@ -114,14 +125,14 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
   // Check every 10 seconds whether there is an update to the `transaction`
   const router = useRouter()
   useEffect(() => {
-    if (transaction.toWallet) {
+    if (didReceiverAccept) {
       return
     }
     const id = setInterval(() => {
       router.replace(router.asPath)
     }, 10 * 1000)
     return () => clearInterval(id)
-  }, [router, transaction])
+  }, [router, didReceiverAccept])
 
   return (
     <PageWrapper>

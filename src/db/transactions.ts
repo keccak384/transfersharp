@@ -10,17 +10,35 @@ const s3Client = new S3Client({
   },
 })
 
-export type Transaction = {
+export type Transaction = BaseTransaction | CompletedTransaction | AuthorizedTransaction
+
+export type BaseTransaction = {
   id: string
   fromWallet: string
   fromPhoneNumber: string
   toPhoneNumber: string
+}
 
-  // This will be present once receiver authorised transaction and logged in with a phone number
-  toWallet?: string
+// Receiver authorised transaction and logged in with a phone number
+export type AuthorizedTransaction = BaseTransaction & {
+  toWallet: string
+}
 
-  // This will be present once transaction is completed and confirmed on the blockchain
-  hash?: string
+// Sender performed actual transaction
+export type CompletedTransaction = AuthorizedTransaction & {
+  buyAmount: string
+  sellAmount: string
+  buyTokenAddress: string
+  sellTokenAddress: string
+  hash: string
+}
+
+export function isAuthorizedTransaction(transaction: Transaction): transaction is AuthorizedTransaction {
+  return 'toWallet' in transaction
+}
+
+export function isCompletedTransaction(transaction: Transaction): transaction is CompletedTransaction {
+  return 'hash' in transaction
 }
 
 export const getTransactionById = async (id: string): Promise<Transaction> => {
