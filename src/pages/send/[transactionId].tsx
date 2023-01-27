@@ -36,6 +36,15 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     }
   }
 
+  if (transaction.hash) {
+    return {
+      redirect: {
+        destination: `/withdraw/${transaction.id}`,
+        permanent: false,
+      },
+    }
+  }
+
   return {
     props: {
       transaction,
@@ -80,17 +89,25 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
     // Right now, for demo purposes, I am just going to transfer ETH between senders and receivers
     // to simplify the demo process
     try {
-      await web3.eth.sendTransaction({
+      const receipt = await web3.eth.sendTransaction({
         to: transaction.toWallet,
         from: transaction.fromWallet,
         value: web3.utils.toWei('0.001'),
       })
+      await fetch(`/api/confirm/${transaction.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hash: receipt.transactionHash,
+        }),
+      })
+      router.push(`/completed/${transaction.id}`)
     } catch (error) {
       console.log(error)
       throw new Error('There was an error sending transaction. Please try again.')
     }
-
-    // @todo Notify backend
   }
 
   // Check every 10 seconds whether there is an update to the `transaction`
