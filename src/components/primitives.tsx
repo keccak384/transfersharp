@@ -108,7 +108,7 @@ export const PageWrapper = styled('div', {
   flexDirection: 'column',
   justifyContent: 'center',
   alignSelf: 'center',
-  alignItems: 'center',
+  alignItems: 'flex-start',
   margin: 'auto',
   backgroundColor: 'white',
   color: 'black',
