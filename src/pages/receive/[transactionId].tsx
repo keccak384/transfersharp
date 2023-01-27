@@ -1,5 +1,6 @@
 import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
+import { useResetAtom } from 'jotai/utils'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -16,7 +17,7 @@ import {
   Spinner,
 } from '@/components/primitives'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
-import { userDataAtom } from '@/data/wallet'
+import { stateAtom, userDataAtom } from '@/data/wallet'
 import {
   AuthorizedTransaction,
   BaseTransaction,
@@ -124,6 +125,67 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
     return () => clearInterval(id)
   }, [router, transaction])
 
+  const magic = useAtomValue(stateAtom)
+  const refreshState = useResetAtom(stateAtom)
+
+  const footer = (() => {
+    switch (true) {
+      case isAuthorizedTransaction(transaction): {
+        return (
+          <FlexRowFixed>
+            <Spinner />
+            <PendingText>Waiting for the funds to arrive. You can close this page and come back later.</PendingText>
+          </FlexRowFixed>
+        )
+      }
+      case userData && userData.phoneNumber !== transaction.toPhoneNumber: {
+        return (
+          <>
+            <InvitePendingMessage>
+              You can only approve this transaction if you are signed in with the phone number that was invited.
+            </InvitePendingMessage>
+            <Button
+              as="a"
+              href="#"
+              onClick={async () => {
+                await magic.user.logout()
+                refreshState()
+              }}
+            >
+              Logout
+            </Button>
+          </>
+        )
+      }
+      case !!userData: {
+        return (
+          <Button as="a" href="#" onClick={approveTransaction}>
+            Approve
+          </Button>
+        )
+      }
+      default: {
+        return (
+          <>
+            <InvitePendingMessage>
+              {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
+            </InvitePendingMessage>
+            <Button
+              as="a"
+              href="#"
+              onClick={() => {
+                setLoginModalPhoneNumber(transaction.toPhoneNumber)
+                setIsLoginModalOpen(true)
+              }}
+            >
+              Sign up to receive
+            </Button>
+          </>
+        )
+      }
+    }
+  })()
+
   return (
     <PageWrapper>
       <ReceiveWrapper>
@@ -141,36 +203,7 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
               <BigText>EURO</BigText>
             </FlexRowFixed>
           </InviteWrapper>
-          {isAuthorizedTransaction(transaction) ? (
-            <>
-              <FlexRowFixed>
-                <Spinner />
-                <PendingText>Waiting for the funds to arrive. You can close this page and come back later.</PendingText>
-              </FlexRowFixed>
-            </>
-          ) : userData ? (
-            <>
-              <Button as="a" href="#" onClick={approveTransaction}>
-                Approve
-              </Button>
-            </>
-          ) : (
-            <>
-              <InvitePendingMessage>
-                {`Signing up is free and easy. There are no fees and we'll never share your phone number without your consent.`}
-              </InvitePendingMessage>
-              <Button
-                as="a"
-                href="#"
-                onClick={() => {
-                  setLoginModalPhoneNumber(transaction.toPhoneNumber)
-                  setIsLoginModalOpen(true)
-                }}
-              >
-                Sign up to receive
-              </Button>
-            </>
-          )}
+          {footer}
         </FlexColumn>
       </ReceiveWrapper>
     </PageWrapper>
