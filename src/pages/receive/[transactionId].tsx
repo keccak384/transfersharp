@@ -162,7 +162,7 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
       case !!userData: {
         return (
           <Button as="a" href="#" onClick={approveTransaction}>
-            Approve
+            Accept
           </Button>
         )
       }
