@@ -101,14 +101,16 @@ export const Spinner = styled('span', {
 
 export const PageWrapper = styled('div', {
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   justifyContent: 'center',
-  alignItems: 'center',
+  // alignItems: 'center',
   alignSelf: 'center',
   margin: 'auto',
+  marginTop: '100px',
   backgroundColor: 'white',
   color: 'black',
   padding: '0 0 50px',
+  gap: '24px',
 })
 
 export const StyledSendForm = styled('form', {
@@ -130,7 +132,7 @@ export const PendingText = styled(SmallText, {
 })
 
 export const SuccessText = styled(SmallText, {
-  color: '$green9',
+  color: '$grass9',
 })
 
 export const InvitePendingMessage = styled('p', {

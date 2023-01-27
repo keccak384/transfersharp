@@ -1,4 +1,4 @@
-import { blue, gray, green, red } from '@radix-ui/colors'
+import { blue, grass, gray, green, red } from '@radix-ui/colors'
 import { createStitches, globalCss } from '@stitches/react'
 
 export const { styled, getCssText } = createStitches({
@@ -11,6 +11,7 @@ export const { styled, getCssText } = createStitches({
       ...blue,
       ...red,
       ...green,
+      ...grass,
     },
     space: {
       1: '4px',

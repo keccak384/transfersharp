@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
 import { inputValueAtom, outputValueAtom } from '../data/swap'
-import { FlexRow, Input, InputWrapper } from './primitives'
+import { FlexRow, Input, InputWrapper, SmallText } from './primitives'
 
 function fetchQuote(amount: number) {
   return fetch(
@@ -62,6 +62,9 @@ export default function SwapForm() {
             EUR
           </FlexRow>
         </FlexRow>
+        <SmallText css={{ color: '$grass10' }}>
+          +€1.27 more than <i>Wise</i>
+        </SmallText>
       </InputWrapper>
     </>
   )

@@ -36,7 +36,7 @@ function App({ Component, pageProps }: AppProps) {
     <AppWrapper>
       <Header>
         <Link href="/">
-          <Image src="/uPay.png" alt="13" width={56} height={56} priority />
+          <Image src="/logo.svg" alt="13" width={148} height={50} priority />
         </Link>
         {isLoggedIn ? (
           <a
