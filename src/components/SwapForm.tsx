@@ -59,13 +59,23 @@ export default function SwapForm() {
         <Label.Root htmlFor="youSendValue">They receive</Label.Root>
         <FlexRow>
           {quote && <CurrencySymbolWrapper>€</CurrencySymbolWrapper>}
-          <Input name="youReceiveValue" pattern="[0-9]*" type="number" inputMode="numeric" value={quote?.buyAmount} />
+          <Input
+            name="youReceiveValue"
+            pattern="[0-9]*"
+            type="number"
+            inputMode="numeric"
+            autocomplete="one-time-code"
+            value={quote?.buyAmount}
+          />
           <FlexRow>
             {' '}
             <Image src="/EUR.png" alt="13" width={20} height={20} priority />
             EUR
           </FlexRow>
         </FlexRow>
+        <SmallText css={{ color: '$grass10' }}>
+          +€1.27 more than <i>Wise</i>
+        </SmallText>
       </InputWrapper>
     </>
   )

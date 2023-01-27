@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { FormEvent, Suspense, useState } from 'react'
 
+import InfoBox from '@/components/InfoBox'
 import {
   Button,
   Input,
@@ -77,6 +78,7 @@ function SendForm() {
 
   return (
     <PageWrapper>
+      <InfoBox />
       <StyledSendForm onSubmit={handleSend}>
         <SwapForm />
         {userData && (

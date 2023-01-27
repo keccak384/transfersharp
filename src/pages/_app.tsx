@@ -13,6 +13,7 @@ import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 const AppWrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
+
   width: '100vw',
   minHeight: '100vh',
   overflow: 'scroll',
@@ -23,6 +24,7 @@ const Header = styled('header', {
   width: '100%',
   flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'center',
   padding: '24px',
 })
 
@@ -36,7 +38,7 @@ function App({ Component, pageProps }: AppProps) {
     <AppWrapper>
       <Header>
         <Link href="/">
-          <Image src="/uPay.png" alt="13" width={56} height={56} priority />
+          <Image src="/logo.svg" alt="13" width={148} height={50} priority />
         </Link>
         {isLoggedIn ? (
           <a
