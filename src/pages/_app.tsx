@@ -5,10 +5,14 @@ import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import Web3 from 'web3'
 
 import ConnectWithPhoneDialog from '@/components/ConnectWithPhoneDialog'
 import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+
+import { FlexColumn, FlexRowFixed, SmallText } from '../components/primitives'
 
 const AppWrapper = styled('div', {
   display: 'flex',
