@@ -19,7 +19,7 @@ import {
 } from '@/components/primitives'
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
-import { loginModalAtom } from '@/data/modal'
+import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { quoteAtom } from '@/data/swap'
 import { isLoggedInAtom, web3Atom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
@@ -58,6 +58,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
+  const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
 
   const web3 = useAtomValue(web3Atom)
   const swapQuote = useAtomValue(quoteAtom)
@@ -155,6 +156,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
           <Button
             onClick={(e) => {
               e.preventDefault()
+              setLoginModalPhoneNumber(transaction.toPhoneNumber)
               setIsLoginModalOpen(true)
             }}
           >
