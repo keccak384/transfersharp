@@ -5,10 +5,19 @@ import { getTransactionById, Transaction } from '@/db/transactions'
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
 
-  if (!transaction || !transaction.hash) {
+  if (!transaction) {
     return {
       redirect: {
         destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  if (!transaction.hash) {
+    return {
+      redirect: {
+        destination: `/receive/${transaction.id}`,
         permanent: false,
       },
     }
