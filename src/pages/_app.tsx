@@ -34,6 +34,26 @@ function App({ Component, pageProps }: AppProps) {
   const refreshState = useResetAtom(stateAtom)
   const [isLoginModalOpen, setIsLoginModalOpen] = useAtom(loginModalAtom)
 
+  const [address, setUserAddress] = useState('')
+  const [number, setUserNumber] = useState('')
+  const [ETHbalance, setUserETHbalance] = useState('')
+  const [USDbalance, setUserUSDbalance] = useState('')
+  const [EURbalance, setUserEURBalance] = useState('')
+
+  useEffect(() => {
+    async function getUserData() {
+      magic.user.isLoggedIn().then((isLoggedIn) => {
+        if (isLoggedIn) {
+          magic.user.getMetadata().then((metadata) => {
+            setUserAddress(metadata.publicAddress)
+            setUserNumber(metadata.phoneNumber)
+          })
+        }
+      })
+    }
+    getUserData()
+  })
+
   const getBalances = async () => {
     const web3 = new Web3(magic.rpcProvider)
     const address = (await web3.eth.getAccounts())[0]
