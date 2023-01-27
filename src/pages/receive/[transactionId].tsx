@@ -49,6 +49,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 
 const ReceiveWrapper = styled('div', {
   maxWidth: '500px',
+  width: '100%',
   padding: '24px',
   border: '1px solid $gray6',
   borderRadius: '24px',

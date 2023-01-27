@@ -1,5 +1,4 @@
 // pages/users/[uid].js
-import * as Label from '@radix-ui/react-label'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { styled } from 'stitches.config'
