@@ -34,7 +34,7 @@ export const getTransactionById = async (id: string): Promise<Transaction> => {
   const body = await response.Body?.transformToString()
 
   if (!body) {
-    throw new Error('Invalid transaction')
+    throw new Error('Error retrieving transaction.')
   }
 
   return JSON.parse(body)
