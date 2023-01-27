@@ -1,17 +1,15 @@
 import * as Label from '@radix-ui/react-label'
 import { useAtom } from 'jotai'
 import Image from 'next/image'
+import qs from 'qs'
 import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
-import { inputValueAtom, outputValueAtom } from '../data/swap'
+import { inputValueAtom, quoteAtom } from '../data/swap'
 import { FlexRow, Input, InputWrapper } from './primitives'
 
-function fetchQuote(amount: number) {
-  return fetch(
-    `https://jnru9d0d29.execute-api.us-east-1.amazonaws.com/prod/quote?tokenInAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&tokenInChainId=1&tokenOutAddress=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&tokenOutChainId=1&amount=${amount}&type=exactIn`
-  )
-}
+const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+const EURC = '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c'
 
 const CurrencySymbolWrapper = styled('div', {
   fontSize: '42px',
@@ -21,15 +19,21 @@ const CurrencySymbolWrapper = styled('div', {
 
 export default function SwapForm() {
   const [inputValue, setInputValue] = useAtom(inputValueAtom)
-  const [outputValue, setOutputValue] = useAtom(outputValueAtom)
+  const [quote, setQuote] = useAtom(quoteAtom)
 
   useEffect(() => {
-    // Update the document title using the browser API
-    fetchQuote(inputValue).then(async (res) => {
-      const json = await res.json()
-      setOutputValue(json.quote)
-    })
-  }, [inputValue, setOutputValue])
+    ;(async () => {
+      const response = await fetch(
+        `https://api.0x.org/swap/v1/quote?${qs.stringify({
+          sellToken: USDC,
+          buyToken: EURC,
+          sellAmount: inputValue,
+        })}`
+      )
+      const quote = await response.json()
+      setQuote(quote)
+    })()
+  }, [inputValue, setQuote])
 
   return (
     <>
@@ -54,8 +58,8 @@ export default function SwapForm() {
       <InputWrapper>
         <Label.Root htmlFor="youSendValue">They receive</Label.Root>
         <FlexRow>
-          {outputValue && <CurrencySymbolWrapper>€</CurrencySymbolWrapper>}
-          <Input name="youReceiveValue" pattern="[0-9]*" type="number" inputMode="numeric" value={outputValue} />
+          {quote && <CurrencySymbolWrapper>€</CurrencySymbolWrapper>}
+          <Input name="youReceiveValue" pattern="[0-9]*" type="number" inputMode="numeric" value={quote?.buyAmount} />
           <FlexRow>
             {' '}
             <Image src="/EUR.png" alt="13" width={20} height={20} priority />

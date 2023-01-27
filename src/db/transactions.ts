@@ -5,7 +5,12 @@ export type Transaction = {
   fromWallet: string
   fromPhoneNumber: string
   toPhoneNumber: string
+
+  // This will be present once receiver authorised transaction and logged in with a phone number
   toWallet?: string
+
+  // This will be present once transaction is completed and confirmed on the blockchain
+  hash?: string
 }
 
 export const getTransactionById = async (id: string): Promise<Transaction> => {

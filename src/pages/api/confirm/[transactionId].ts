@@ -12,16 +12,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   const transaction = await getTransactionById(req.query.transactionId as string)
-  transaction.toWallet = req.body.toWallet
+  transaction.hash = req.body.hash
 
   await saveTransaction(transaction)
 
-  const url = `https://${req.headers.host}/send/${transaction.id}`
+  const url = `https://${req.headers.host}/withdraw/${transaction.id}`
 
   await client.messages.create({
     from: TWILIO_PHONE,
-    to: transaction.fromPhoneNumber,
-    body: `Hey, ${transaction.toPhoneNumber} accepted your invite! Go to ${url} to continue the transaction!`,
+    to: transaction.toPhoneNumber,
+    body: `Hey, ${transaction.fromPhoneNumber} just sent you some money! Go to ${url} to withdraw!`,
   })
 
   res.status(200).json(transaction)

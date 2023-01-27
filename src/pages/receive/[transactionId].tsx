@@ -20,6 +20,34 @@ const ReceiveWrapper = styled('div', {
   borderRadius: '24px',
 })
 
+export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
+  const transaction = await getTransactionById(transactionId)
+
+  if (!transaction) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
+
+  if (transaction.hash) {
+    return {
+      redirect: {
+        destination: `/withdraw/${transaction.id}`,
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      transaction,
+    },
+  }
+}
+
 const InviteWrapper = styled(ReceiveWrapper, {
   backgroundColor: '$gray2',
   border: 'none',
@@ -45,25 +73,6 @@ const FlexColumn = styled('div', {
   flexDirection: 'column',
   gap: '24px',
 })
-
-export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
-  const transaction = await getTransactionById(transactionId)
-
-  if (!transaction) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: {
-      transaction,
-    },
-  }
-}
 
 function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
   const userData = useAtomValue(userDataAtom)
