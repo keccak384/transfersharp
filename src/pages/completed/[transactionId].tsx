@@ -1,6 +1,6 @@
 // pages/users/[uid].js
 
-import { getTransactionById, Transaction } from '@/db/transactions'
+import { CompletedTransaction, getTransactionById, isCompletedTransaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -14,7 +14,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     }
   }
 
-  if (!transaction.hash) {
+  if (!isCompletedTransaction(transaction)) {
     return {
       redirect: {
         destination: `/send/${transaction.id}`,
@@ -30,7 +30,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
   }
 }
 
-export default function Completed({ transaction }: { transaction: Transaction }) {
+export default function Completed({ transaction }: { transaction: CompletedTransaction }) {
   return (
     <div style={{ padding: 40 }}>
       <h2>Your transaction has completed</h2>

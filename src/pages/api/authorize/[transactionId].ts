@@ -1,28 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Twilio from 'twilio'
 
-import { getTransactionById, saveTransaction, Transaction } from '@/db/transactions'
+import { AuthorizedTransaction, getTransactionById, saveTransaction } from '@/db/transactions'
 import { TWILIO_ACCOUNT_SID, TWILIO_PHONE, TWILIO_TOKEN } from '@/env'
 
 const client = new Twilio.Twilio(TWILIO_ACCOUNT_SID, TWILIO_TOKEN)
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Transaction>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<AuthorizedTransaction>) {
   if (req.method !== 'POST') {
     return
   }
 
   const transaction = await getTransactionById(req.query.transactionId as string)
-  transaction.toWallet = req.body.toWallet
+  const authorizedTransaction = {
+    ...transaction,
+    toWallet: req.body.toWallet,
+  }
 
-  await saveTransaction(transaction)
+  await saveTransaction(authorizedTransaction)
 
-  const url = `https://${req.headers.host}/send/${transaction.id}`
+  const url = `https://${req.headers.host}/send/${authorizedTransaction.id}`
 
   await client.messages.create({
     from: TWILIO_PHONE,
-    to: transaction.fromPhoneNumber,
-    body: `Hey, ${transaction.toPhoneNumber} accepted your invite! Go to ${url} to continue the transaction!`,
+    to: authorizedTransaction.fromPhoneNumber,
+    body: `Hey, ${authorizedTransaction.toPhoneNumber} accepted your invite! Go to ${url} to continue the transaction!`,
   })
 
-  res.status(200).json(transaction)
+  res.status(200).json(authorizedTransaction)
 }

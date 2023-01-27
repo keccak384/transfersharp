@@ -9,7 +9,7 @@ import { styled } from 'stitches.config'
 import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { userDataAtom } from '@/data/wallet'
-import { getTransactionById, Transaction } from '@/db/transactions'
+import { AuthorizedTransaction, BaseTransaction, getTransactionById, isCompletedTransaction } from '@/db/transactions'
 
 import { FlexRowFixed } from '../../components/primitives'
 
@@ -32,7 +32,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     }
   }
 
-  if (transaction.hash) {
+  if (isCompletedTransaction(transaction)) {
     return {
       redirect: {
         destination: `/withdraw/${transaction.id}`,
@@ -74,7 +74,7 @@ const FlexColumn = styled('div', {
   gap: '24px',
 })
 
-function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
+function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | AuthorizedTransaction }) {
   const userData = useAtomValue(userDataAtom)
   const router = useRouter()
 
@@ -83,7 +83,7 @@ function ReceiveTransaction({ transaction }: { transaction: Transaction }) {
 
   useEffect(() => {
     ;(async () => {
-      if (userData && !transaction.toWallet) {
+      if (userData && !('toWallet' in transaction)) {
         const response = await fetch(`/api/authorize/${transaction.id}`, {
           method: 'POST',
           headers: {
