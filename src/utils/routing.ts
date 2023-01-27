@@ -49,13 +49,11 @@ export async function executeRoute(route: SwapRoute, walletAddress: string, prov
     return TransactionState.Failed
   }
 
-  const res = await sendTransaction({
+  const res = await sendTransaction(provider, {
     data: route.methodParameters?.calldata,
     to: V3_SWAP_ROUTER_ADDRESS,
-    value: route?.methodParameters?.value,
+    // value: route?.methodParameters?.value,
     from: walletAddress,
-    maxFeePerGas: MAX_FEE_PER_GAS,
-    maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
   })
 
   return res
@@ -80,8 +78,6 @@ export async function getTokenTransferApproval(token: Token, walletAddress: stri
     return sendTransaction(provider, {
       ...transaction,
       from: walletAddress,
-      data: '0x',
-      value: 1,
     })
   } catch (e) {
     console.error(e)
