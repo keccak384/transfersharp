@@ -17,6 +17,14 @@ export const USDC_TOKEN = new Token(
   'USD//C'
 )
 
+export const EUROC_TOKEN = new Token(
+  SupportedChainId.MAINNET,
+  '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c',
+  6,
+  'EUROC',
+  'EURO//C'
+)
+
 export const DAI_TOKEN = new Token(
   SupportedChainId.MAINNET,
   '0x6B175474E89094C44Da98b954EedeAC495271d0F',

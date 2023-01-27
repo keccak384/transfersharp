@@ -1,36 +1,35 @@
+import { Contract } from '@ethersproject/contracts'
 import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core'
 import { AlphaRouter, ChainId, SwapOptionsSwapRouter02, SwapRoute, SwapType } from '@uniswap/smart-order-router'
-import { ethers } from 'ethers'
 
 import {
   ERC20_ABI,
+  EUROC_TOKEN,
   MAX_FEE_PER_GAS,
   MAX_PRIORITY_FEE_PER_GAS,
   TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER,
+  USDC_TOKEN,
   V3_SWAP_ROUTER_ADDRESS,
 } from './constants'
 import { fromReadableAmount } from './conversion'
 import { sendTransaction, TransactionState } from './providers'
 
-export async function generateRoute(): Promise<SwapRoute | null> {
+export async function generateRoute(recipient: string, provider: any): Promise<SwapRoute | null> {
   const router = new AlphaRouter({
     chainId: ChainId.MAINNET,
     provider,
   })
 
   const options: SwapOptionsSwapRouter02 = {
-    recipient: CurrentConfig.wallet.address,
+    recipient,
     slippageTolerance: new Percent(5, 100),
     deadline: Math.floor(Date.now() / 1000 + 1800),
     type: SwapType.SWAP_ROUTER_02,
   }
 
   const route = await router.route(
-    CurrencyAmount.fromRawAmount(
-      CurrentConfig.tokens.in,
-      fromReadableAmount(CurrentConfig.tokens.amountIn, CurrentConfig.tokens.in.decimals).toString()
-    ),
-    CurrentConfig.tokens.out,
+    CurrencyAmount.fromRawAmount(USDC_TOKEN, fromReadableAmount(USDC_TOKEN, 6).toString()),
+    EUROC_TOKEN,
     TradeType.EXACT_INPUT,
     options
   )
@@ -38,7 +37,7 @@ export async function generateRoute(): Promise<SwapRoute | null> {
   return route
 }
 
-export async function executeRoute(route: SwapRoute): Promise<TransactionState> {
+export async function executeRoute(route: SwapRoute, provider: any): Promise<TransactionState> {
   const walletAddress = getWalletAddress()
 
   if (!walletAddress || !provider) {
@@ -64,7 +63,7 @@ export async function executeRoute(route: SwapRoute): Promise<TransactionState> 
   return res
 }
 
-export async function getTokenTransferApproval(token: Token): Promise<TransactionState> {
+export async function getTokenTransferApproval(token: Token, provider: any): Promise<TransactionState> {
   const address = getWalletAddress()
   if (!provider || !address) {
     console.log('No Provider Found')
@@ -72,7 +71,7 @@ export async function getTokenTransferApproval(token: Token): Promise<Transactio
   }
 
   try {
-    const tokenContract = new ethers.Contract(token.address, ERC20_ABI, provider)
+    const tokenContract = new Contract(token.address, ERC20_ABI, provider)
 
     const transaction = await tokenContract.populateTransaction.approve(
       V3_SWAP_ROUTER_ADDRESS,

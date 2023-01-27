@@ -1,4 +1,5 @@
-import { ethers, BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { TransactionRequest } from '@ethersproject/providers'
 
 export enum TransactionState {
   Failed = 'Failed',
@@ -8,8 +9,7 @@ export enum TransactionState {
   Sent = 'Sent',
 }
 
-export async function sendTransaction(transaction: ethers.providers.TransactionRequest): Promise<TransactionState> {
-  const provider = getProvider()
+export async function sendTransaction(provider: any, transaction: TransactionRequest): Promise<TransactionState> {
   if (!provider) {
     return TransactionState.Failed
   }

@@ -8,3 +8,10 @@ export function fromReadableAmount(amount: number, decimals: number): JSBI {
     JSBI.BigInt(extraDigits)
   )
 }
+
+function countDecimals(x: number) {
+  if (Math.floor(x) === x) {
+    return 0
+  }
+  return x.toString().split('.')[1].length || 0
+}
