@@ -383,9 +383,14 @@ function SendForm() {
 
   return (
     <PageWrapper>
-      <Button onClick={SendTransaction}>Test Send 0.1 ETH to callil.eth (PROOF OF CONCEPT)</Button>
+      {/* This button approves USDC for the input amount and swaps it for  EUROC to self */}
       <Button onClick={SwapTokens}>Approve and Swap</Button>
-      {/* <Button onClick={SwapTokens}>Test swap 1 USDC to ETH</Button> */}
+      {/* This button sends EUROC to self */}
+      <Button onClick={SendTransaction}>Send EUR to self</Button>
+
+      {/* Both of these can be wrapped together in the functions above since they don't need to be signed */}
+
+      {/* I'm sory about the code quality :( */}
 
       <StyledSendForm onSubmit={handleSend}>
         <SwapForm />

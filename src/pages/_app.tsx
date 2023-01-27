@@ -98,7 +98,7 @@ function App({ Component, pageProps }: AppProps) {
     USDcontract.methods.balanceOf(address).call((error, balance) => {
       console.log(web3.utils.fromWei(balance) + ' USD')
       const balanceInWei = web3.utils.fromWei(balance)
-      setUserUSDBalance(balanceInWei)
+      setUserUSDbalance(balanceInWei)
     })
   }
 
@@ -125,8 +125,8 @@ function App({ Component, pageProps }: AppProps) {
               <SmallText css={{ color: '$gray12' }}>{number}</SmallText>
               <SmallText css={{ color: '$gray8' }}>{address}</SmallText>
               <SmallText css={{ color: '$gray8' }}>{ETHbalance} ETH</SmallText>
-              <SmallText css={{ color: '$gray8' }}>${USDbalance} USDC</SmallText>
-              <SmallText css={{ color: '$gray8' }}>€{EURbalance} EUROC</SmallText>
+              <SmallText css={{ color: '$gray8' }}>{USDbalance} USDC</SmallText>
+              <SmallText css={{ color: '$gray8' }}>{EURbalance} EUROC</SmallText>
             </FlexColumn>
           </FlexRowFixed>
         ) : (
