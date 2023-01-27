@@ -9,7 +9,8 @@ import { FlexRow, Input, InputWrapper } from './primitives'
 
 function fetchQuote(amount: number) {
   return fetch(
-    `https://jnru9d0d29.execute-api.us-east-1.amazonaws.com/prod/quote?tokenInAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&tokenInChainId=1&tokenOutAddress=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&tokenOutChainId=1&amount=${amount}&type=exactIn`
+    `https://api.0x.org/swap/v1/price?buyToken=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&sellToken=USDC&sellAmount=1000000000`
+    // `https://jnru9d0d29.execute-api.us-east-1.amazonaws.com/prod/quote?tokenInAddress=0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48&tokenInChainId=1&tokenOutAddress=0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c&tokenOutChainId=1&amount=${amount}&type=exactIn`
   )
 }
 
@@ -27,7 +28,7 @@ export default function SwapForm() {
     // Update the document title using the browser API
     fetchQuote(inputValue).then(async (res) => {
       const json = await res.json()
-      setOutputValue(json.quote)
+      setOutputValue(parseInt(json.price * inputValue))
     })
   }, [inputValue, setOutputValue])
 
