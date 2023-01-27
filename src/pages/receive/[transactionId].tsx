@@ -17,7 +17,13 @@ import {
 } from '@/components/primitives'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { userDataAtom } from '@/data/wallet'
-import { AuthorizedTransaction, BaseTransaction, getTransactionById, isCompletedTransaction } from '@/db/transactions'
+import {
+  AuthorizedTransaction,
+  BaseTransaction,
+  getTransactionById,
+  isAuthorizedTransaction,
+  isCompletedTransaction,
+} from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -88,29 +94,35 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
   const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
-  useEffect(() => {
-    ;(async () => {
-      if (userData && !('toWallet' in transaction)) {
-        const response = await fetch(`/api/authorize/${transaction.id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            toWallet: userData.publicAddress,
-          }),
-        })
+  const approveTransaction = async () => {
+    if (userData && !('toWallet' in transaction)) {
+      const response = await fetch(`/api/authorize/${transaction.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          toWallet: userData.publicAddress,
+        }),
+      })
 
-        // Refresh `server.side` props to get fresh transaction
-        if (response.status === 200) {
-          router.replace(router.asPath)
-          return
-        }
-
-        throw new Error('Something went wrong. Please try again later.')
+      // Refresh `server.side` props to get fresh transaction
+      if (response.status === 200) {
+        router.replace(router.asPath)
+        return
       }
-    })()
-  }, [router, userData, transaction])
+
+      throw new Error('Something went wrong. Please try again later.')
+    }
+  }
+
+  // Check every 10 seconds whether there is an update to the `transaction`
+  useEffect(() => {
+    const id = setInterval(() => {
+      router.replace(router.asPath)
+    }, 10 * 1000)
+    return () => clearInterval(id)
+  }, [router, transaction])
 
   return (
     <PageWrapper>
@@ -129,13 +141,18 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
               <BigText>EURO</BigText>
             </FlexRowFixed>
           </InviteWrapper>
-
-          {userData ? (
+          {isAuthorizedTransaction(transaction) ? (
             <>
               <FlexRowFixed>
                 <Spinner />
                 <PendingText>Waiting for the funds to arrive. You can close this page and come back later.</PendingText>
               </FlexRowFixed>
+            </>
+          ) : userData ? (
+            <>
+              <Button as="a" href="#" onClick={approveTransaction}>
+                Approve
+              </Button>
             </>
           ) : (
             <>
