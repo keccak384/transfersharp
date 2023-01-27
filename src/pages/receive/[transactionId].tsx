@@ -26,6 +26,8 @@ import {
   isCompletedTransaction,
 } from '@/db/transactions'
 
+import { useFetch } from '../util'
+
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
 
@@ -91,6 +93,7 @@ const FlexColumn = styled('div', {
 function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | AuthorizedTransaction }) {
   const userData = useAtomValue(userDataAtom)
   const router = useRouter()
+  const [isPendingFetch, fetch] = useFetch()
 
   const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
@@ -160,7 +163,7 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
       case !!userData: {
         return (
           <Button as="a" href="#" onClick={approveTransaction}>
-            Approve
+            {isPendingFetch ? 'Approving...' : 'Approve'}
           </Button>
         )
       }
