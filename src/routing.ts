@@ -57,7 +57,11 @@ export async function executeRoute(route: SwapRoute, walletAddress: string, prov
   return res
 }
 
-export async function getTokenTransferApproval(token: Token, walletAddress: string, provider: any): Promise<TransactionState> {
+export async function getTokenTransferApproval(
+  token: Token,
+  walletAddress: string,
+  provider: any
+): Promise<TransactionState> {
   if (!provider || !walletAddress) {
     console.log('No Provider Found')
     return TransactionState.Failed
