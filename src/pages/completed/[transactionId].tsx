@@ -1,5 +1,8 @@
-// pages/users/[uid].js
+import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import { styled } from 'stitches.config'
 
+import { FlexRowFixed, PageWrapper, SmallText } from '@/components/primitives'
 import { CompletedTransaction, getTransactionById, isCompletedTransaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
@@ -30,11 +33,70 @@ export async function getServerSideProps({ params: { transactionId } }: { params
   }
 }
 
-export default function Completed({ transaction }: { transaction: CompletedTransaction }) {
+const ReceiveWrapper = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  maxWidth: '500px',
+  width: '100%',
+  padding: '24px',
+  border: '1px solid $gray6',
+  borderRadius: '24px',
+  gap: '24px',
+})
+
+const InviteWrapper = styled(ReceiveWrapper, {
+  backgroundColor: '$gray2',
+  border: 'none',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+  width: '100%',
+})
+
+const BigText = styled('span', {
+  fontSize: '42px',
+  appearance: 'none',
+  color: '$gray12',
+})
+
+const MediumText = styled('span', {
+  fontSize: '20px',
+  appearance: 'none',
+  color: '$gray12',
+})
+
+const FlexColumn = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+})
+
+const Received = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+function Completed({ transaction }: { transaction: CompletedTransaction }) {
   return (
-    <div style={{ padding: 40 }}>
-      <h2>Your transaction has completed</h2>
-      <p>Your receiver ${transaction.toPhoneNumber} can now withdraw money! Enjoy fast transfers!</p>
-    </div>
+    <PageWrapper>
+      <ReceiveWrapper>
+        <InviteWrapper>
+          <FlexColumn>
+            <Received>
+              <SmallText>You just sent</SmallText>
+              <BigText>€{transaction.buyAmount}</BigText>
+            </Received>
+            <FlexRowFixed>
+              <Image src="/EUR.png" alt="13" width={20} height={20} priority />
+              <MediumText>EURO</MediumText>
+            </FlexRowFixed>
+          </FlexColumn>
+        </InviteWrapper>
+      </ReceiveWrapper>
+    </PageWrapper>
   )
 }
+
+export default dynamic(() => Promise.resolve(Completed), {
+  ssr: false,
+})
