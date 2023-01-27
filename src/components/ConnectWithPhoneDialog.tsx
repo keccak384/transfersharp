@@ -89,10 +89,6 @@ export default function ConnectWithPhoneDialog({
               placeholder="+1 800 888 8888"
               required
               value={phoneNumber.length > 0 ? phoneNumber : undefined}
-              pattern="[0-9]*"
-              type="number"
-              inputMode="numeric"
-              autocomplete="one-time-code"
             />
             <Button>Login</Button>
           </DialogForm>
