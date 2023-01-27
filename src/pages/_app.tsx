@@ -34,6 +34,36 @@ function App({ Component, pageProps }: AppProps) {
   const refreshState = useResetAtom(stateAtom)
   const [isLoginModalOpen, setIsLoginModalOpen] = useAtom(loginModalAtom)
 
+  const getBalances = async () => {
+    const web3 = new Web3(magic.rpcProvider)
+    const address = (await web3.eth.getAccounts())[0]
+    const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+    const EUR_ADDRESS = '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c'
+
+    const ETHbalance = web3.utils.fromWei(
+      await web3.eth.getBalance(address) // Balance is in wei
+    )
+    setUserETHbalance(ETHbalance)
+
+    const EURcontract = new web3.eth.Contract(erc20abi, EUR_ADDRESS)
+
+    EURcontract.methods.balanceOf(address).call((error, balance) => {
+      console.log(web3.utils.fromWei(balance) + ' EUR')
+      const balanceInWei = web3.utils.fromWei(balance)
+      setUserEURBalance(balanceInWei)
+    })
+
+    const USDcontract = new web3.eth.Contract(erc20abi, USDC_ADDRESS)
+
+    USDcontract.methods.balanceOf(address).call((error, balance) => {
+      console.log(web3.utils.fromWei(balance) + ' USD')
+      const balanceInWei = web3.utils.fromWei(balance)
+      setUserUSDbalance(balanceInWei)
+    })
+  }
+
+  getBalances()
+
   return (
     <AppWrapper>
       <Header>
