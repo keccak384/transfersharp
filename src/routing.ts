@@ -5,8 +5,6 @@ import { AlphaRouter, ChainId, SwapOptionsSwapRouter02, SwapRoute, SwapType } fr
 import {
   ERC20_ABI,
   EUROC_TOKEN,
-  MAX_FEE_PER_GAS,
-  MAX_PRIORITY_FEE_PER_GAS,
   TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER,
   USDC_TOKEN,
   V3_SWAP_ROUTER_ADDRESS,
