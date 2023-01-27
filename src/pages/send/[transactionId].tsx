@@ -52,9 +52,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
 
   const web3 = useAtomValue(web3Atom)
   const swapQuote = useAtomValue(quoteAtom)
-  console.log(transaction)
 
-  web3.eth.getAccounts().then(console.log)
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
