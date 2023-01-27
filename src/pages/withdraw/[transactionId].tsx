@@ -36,10 +36,22 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 }
 
 const ReceiveWrapper = styled('div', {
-  maxWidth: '500px',
+  display: 'flex',
+  flexDirection: 'column',
+  width: '500px',
   padding: '24px',
   border: '1px solid $gray6',
   borderRadius: '24px',
+  gap: '24px',
+})
+
+const InviteWrapper = styled(ReceiveWrapper, {
+  backgroundColor: '$gray2',
+  border: 'none',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+  width: '100%',
 })
 
 const BigText = styled('span', {
@@ -60,29 +72,36 @@ const FlexColumn = styled('div', {
   gap: '24px',
 })
 
+const Received = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+})
+
 function Withdraw({ transaction }: { transaction: Transaction }) {
   return (
     <PageWrapper>
       <ReceiveWrapper>
-        <FlexColumn>
-          <Label.Root htmlFor="youReceived">
-            <MediumText>You just received</MediumText>
-          </Label.Root>
-          <BigText>€920</BigText>
-          <FlexRowFixed>
-            <Image src="/EUR.png" alt="13" width={36} height={36} priority />
-            <BigText>EURO</BigText>
-          </FlexRowFixed>
-          <Button
-            as="a"
-            href="#"
-            onClick={() => {
-              console.log('here')
-            }}
-          >
-            Withdraw
-          </Button>
-        </FlexColumn>
+        <InviteWrapper>
+          <FlexColumn>
+            <Received>
+              <SmallText>You just received</SmallText>
+              <BigText>€920</BigText>
+            </Received>
+            <FlexRowFixed>
+              <Image src="/EUR.png" alt="13" width={20} height={20} priority />
+              <MediumText>EURO</MediumText>
+            </FlexRowFixed>
+          </FlexColumn>
+        </InviteWrapper>
+        <Button
+          as="a"
+          href="#"
+          onClick={() => {
+            console.log('here')
+          }}
+        >
+          Withdraw
+        </Button>
       </ReceiveWrapper>
     </PageWrapper>
   )
