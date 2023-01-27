@@ -6,19 +6,18 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
-import { Button, InvitePendingMessage, PageWrapper, PendingText, SmallText, Spinner } from '@/components/primitives'
+import {
+  Button,
+  FlexRowFixed,
+  InvitePendingMessage,
+  PageWrapper,
+  PendingText,
+  SmallText,
+  Spinner,
+} from '@/components/primitives'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { userDataAtom } from '@/data/wallet'
 import { AuthorizedTransaction, BaseTransaction, getTransactionById, isCompletedTransaction } from '@/db/transactions'
-
-import { FlexRowFixed } from '../../components/primitives'
-
-const ReceiveWrapper = styled('div', {
-  maxWidth: '500px',
-  padding: '24px',
-  border: '1px solid $gray6',
-  borderRadius: '24px',
-})
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -47,6 +46,14 @@ export async function getServerSideProps({ params: { transactionId } }: { params
     },
   }
 }
+
+const ReceiveWrapper = styled('div', {
+  maxWidth: '500px',
+  width: '100%',
+  padding: '24px',
+  border: '1px solid $gray6',
+  borderRadius: '24px',
+})
 
 const InviteWrapper = styled(ReceiveWrapper, {
   backgroundColor: '$gray2',
