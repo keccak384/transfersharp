@@ -31,7 +31,7 @@ import {
   Transaction,
 } from '@/db/transactions'
 
-import { useFetch } from '../util'
+import { useFetch } from '../../util'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)

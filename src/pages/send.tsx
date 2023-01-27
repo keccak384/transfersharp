@@ -21,7 +21,7 @@ import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
-import { useFetch } from './util'
+import { useFetch } from '../util'
 
 function LoginButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
