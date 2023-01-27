@@ -91,15 +91,24 @@ function App({ Component, pageProps }: AppProps) {
           <Image src="/logo.svg" alt="13" width={148} height={50} priority />
         </Link>
         {isLoggedIn ? (
-          <a
-            href="#"
-            onClick={async () => {
-              await magic.user.logout()
-              refreshState()
-            }}
-          >
-            Log out
-          </a>
+          <FlexRowFixed>
+            <FlexColumn>
+              <a
+                href="#"
+                onClick={async () => {
+                  await magic.user.logout()
+                  refreshState()
+                }}
+              >
+                Log out
+              </a>
+              <SmallText css={{ color: '$gray12' }}>{number}</SmallText>
+              <SmallText css={{ color: '$gray8' }}>{address}</SmallText>
+              <SmallText css={{ color: '$gray8' }}>{ETHbalance} ETH</SmallText>
+              <SmallText css={{ color: '$gray8' }}>{USDbalance} USDC</SmallText>
+              <SmallText css={{ color: '$gray8' }}>{EURbalance} EUROC</SmallText>
+            </FlexColumn>
+          </FlexRowFixed>
         ) : (
           <>
             <a href="#" onClick={() => setIsLoginModalOpen(true)}>
