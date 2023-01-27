@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 import { atomWithDefault, RESET } from 'jotai/utils'
 import { Magic } from 'magic-sdk'
+import Web3 from 'web3'
 
 import { MAGIC_PUBLIC_KEY } from '../env'
 
@@ -17,6 +18,10 @@ export const stateAtom = atom(
   (get) => get(magicAtom),
   (_, set, action) => (action === RESET ? set(magicAtom, createMagicClient()) : undefined)
 )
+
+// @ts-ignore types are not compatible, but that's what docs say
+// https://magic.link/docs/auth/blockchains/ethereum/javascript#web3.js-2
+export const web3Atom = atom((get) => new Web3(get(magicAtom).rpcProvider))
 
 // https://magic.link/docs/auth/api-reference/client-side-sdks/web#isloggedin
 export const isLoggedInAtom = atom(async (get) => await get(magicAtom).user.isLoggedIn())

@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import React from 'react'
 import { styled } from 'stitches.config'
 
-import { inputValueAtom, outputValueAtom } from '../data/swap'
+import { quoteAtom } from '../data/swap'
 import { DarkText, FlexRow } from './primitives'
 
 const Wrapper = styled('div', {
@@ -13,21 +13,26 @@ const Wrapper = styled('div', {
   padding: '16px',
 })
 
-export default function TransactionDetails() {
-  const inputValue = useAtomValue(inputValueAtom)
-  const outputValue = useAtomValue(outputValueAtom)
+const GWEI_PRICE = 0.000002
 
-  const rate = outputValue ? Math.round((outputValue / inputValue) * 100) / 100 : '...'
+export default function TransactionDetails() {
+  const swapQuote = useAtomValue(quoteAtom)
 
   return (
     <Wrapper>
       <FlexRow>
         <span>Current rate</span>
-        <DarkText>$1 = ${rate}</DarkText>
+        {swapQuote ? (
+          <DarkText>$1 = €{Math.round((+swapQuote.buyAmount / +swapQuote.sellAmount) * 100) / 100}</DarkText>
+        ) : (
+          '...'
+        )}
       </FlexRow>
       <FlexRow>
         <span>Total fees</span>
-        <DarkText>$1.23</DarkText>
+        <DarkText>
+          {swapQuote ? <DarkText>${(+swapQuote.estimatedGas * GWEI_PRICE).toFixed(2)}</DarkText> : '...'}
+        </DarkText>
       </FlexRow>
       <FlexRow>
         <span>Arrival</span>

@@ -25,8 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   await client.messages.create({
     from: TWILIO_PHONE,
-    to: req.body.toPhoneNumber,
-    body: `Hey, ${req.body.fromPhoneNumber} wants to send you some money! Visit ${url} to accept the transaction!`,
+    to: transaction.toPhoneNumber,
+    body: `Hey, ${transaction.fromPhoneNumber} wants to send you some money! Visit ${url} to accept the transaction!`,
   })
 
   res.status(201).json(transaction)
