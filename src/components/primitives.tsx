@@ -105,7 +105,7 @@ export const PageWrapper = styled('div', {
   justifyContent: 'center',
   alignSelf: 'center',
   margin: 'auto',
-  marginTop: '20px',
+  marginTop: '0px',
   backgroundColor: 'white',
   color: 'black',
   gap: '24px',
