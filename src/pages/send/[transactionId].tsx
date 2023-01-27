@@ -92,7 +92,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
       const receipt = await web3.eth.sendTransaction({
         to: transaction.toWallet,
         from: transaction.fromWallet,
-        value: web3.utils.toWei('0.001'),
+        value: web3.utils.toWei('0.0001'),
       })
       await fetch(`/api/confirm/${transaction.id}`, {
         method: 'POST',
