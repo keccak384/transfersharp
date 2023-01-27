@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@next/font": "13.1.5",
@@ -22,11 +23,12 @@
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
     "@uniswap/sdk-core": "^3.1.1",
+    "@uniswap/smart-order-router": "^3.5.0",
     "@uniswap/v3-sdk": "^3.9.0",
     "eslint": "^8.32.0",
     "ethers": "^5.7.2",
     "jotai": "^1.13.1",
-    "magic-sdk": "^13.1.0",
+    "magic-sdk": "^12.0.0",
     "next": "13.1.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
