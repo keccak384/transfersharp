@@ -101,16 +101,21 @@ export const Spinner = styled('span', {
 
 export const PageWrapper = styled('div', {
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
   justifyContent: 'center',
-  // alignItems: 'center',
   alignSelf: 'center',
   margin: 'auto',
-  marginTop: '100px',
+  marginTop: '20px',
   backgroundColor: 'white',
   color: 'black',
-  padding: '0 0 50px',
   gap: '24px',
+  padding: '24px',
+
+  '@bp2': {
+    flexDirection: 'row',
+    marginTop: '100px',
+    padding: '0 0 50px',
+  },
 })
 
 export const StyledSendForm = styled('form', {

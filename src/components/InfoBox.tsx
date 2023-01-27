@@ -14,15 +14,20 @@ export default function InfoBox() {
     overflow: 'hidden',
     color: '$gray1',
     padding: '24px',
-    display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    display: 'none',
 
     '& h1': {
       zIndex: 1,
     },
     '& span': {
       zIndex: 1,
+    },
+
+    '@bp2': {
+      display: 'flex',
+      height: '500px',
     },
   })
 

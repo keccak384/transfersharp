@@ -13,6 +13,7 @@ import { isLoggedInAtom, stateAtom } from '@/data/wallet'
 const AppWrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
+
   width: '100vw',
   minHeight: '100vh',
   overflow: 'scroll',
@@ -23,6 +24,7 @@ const Header = styled('header', {
   width: '100%',
   flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'center',
   padding: '24px',
 })
 

@@ -55,7 +55,14 @@ export default function SwapForm() {
         <Label.Root htmlFor="youSendValue">They receive</Label.Root>
         <FlexRow>
           {outputValue && <CurrencySymbolWrapper>€</CurrencySymbolWrapper>}
-          <Input name="youReceiveValue" pattern="[0-9]*" type="number" inputMode="numeric" value={outputValue} />
+          <Input
+            name="youReceiveValue"
+            pattern="[0-9]*"
+            type="number"
+            inputMode="numeric"
+            autocomplete="one-time-code"
+            value={outputValue}
+          />
           <FlexRow>
             {' '}
             <Image src="/EUR.png" alt="13" width={20} height={20} priority />
