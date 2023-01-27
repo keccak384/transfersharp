@@ -2,7 +2,7 @@ import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { FormEvent, Suspense, useEffect } from 'react'
+import { FormEvent, Suspense, useEffect, useState } from 'react'
 
 import {
   Button,
@@ -12,7 +12,6 @@ import {
   InvitePendingMessage,
   InvitePendingMessageWarning,
   PageWrapper,
-  PendingButton,
   PendingText,
   Spinner,
   StyledSendForm,
@@ -31,6 +30,8 @@ import {
   isCompletedTransaction,
   Transaction,
 } from '@/db/transactions'
+
+import { useFetch } from '../util'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
@@ -62,7 +63,6 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 
 function SendTransaction({ transaction }: { transaction: BaseTransaction | AuthorizedTransaction }) {
   const didReceiverAccept = isAuthorizedTransaction(transaction)
-  const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
   const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
@@ -70,8 +70,13 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
   const web3 = useAtomValue(web3Atom)
   const swapQuote = useAtomValue(quoteAtom)
 
+  const [isPendingFetch, fetch] = useFetch()
+  const [isPendingTransaction, setIsPendingTransaction] = useState(false)
+
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    setIsPendingTransaction(true)
 
     // @todo Load ETH and USDC via Moonpay
 
@@ -119,6 +124,8 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
     } catch (error) {
       console.log(error)
       throw new Error('There was an error sending transaction. Please try again.')
+    } finally {
+      setIsPendingTransaction(false)
     }
   }
 
@@ -136,10 +143,12 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
 
   const userData = useAtomValue(userDataAtom)
 
+  const isPending = isPendingTransaction || isPendingFetch
+
   const footer = (() => {
     switch (true) {
       case userData && userData.phoneNumber === transaction.fromPhoneNumber:
-        return <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
+        return <Button disabled={!didReceiverAccept || isPending}>{isPending ? 'Sending...' : 'Send'}</Button>
       case !userData: {
         return (
           <Button

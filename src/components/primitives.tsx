@@ -20,6 +20,9 @@ export const Button = styled('button', {
   '&:hover': {
     opacity: 0.6,
   },
+  '&[disabled]': {
+    opacity: 0.4,
+  },
 })
 
 export const PendingButton = styled(Button, {
