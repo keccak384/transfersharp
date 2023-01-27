@@ -1,3 +1,4 @@
+import { Web3Provider } from '@ethersproject/providers'
 import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
@@ -20,7 +21,8 @@ import {
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom } from '@/data/modal'
-import { isLoggedInAtom } from '@/data/wallet'
+import { inputValueAtom } from '@/data/swap'
+import { isLoggedInAtom, magicAtom, userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 import { executeRoute, generateRoute } from '@/utils/routing'
 
@@ -46,6 +48,10 @@ export async function getServerSideProps({ params: { transactionId } }: { params
 function SendTransaction({ transaction }: { transaction: Transaction }) {
   const didReceiverAccept = !!transaction.toWallet
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
+  const magic = useAtomValue(magicAtom)
+  const userData = useAtomValue(userDataAtom)
+  const provider = new Web3Provider(magic.rpcProvider)
+  const inputAmount = useAtomValue(inputValueAtom)
 
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
@@ -53,8 +59,8 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
 
   const handleSend = async (e) => {
     e.preventDefault()
-    const route = await generateRoute()
-    await executeRoute(route)
+    const route = await generateRoute('0x703491e54970dc622c3b77d49b6727d5b69eb45c', inputAmount, provider)
+    await executeRoute(route, userData.publicAddress, provider)
   }
 
   // Check every 10 seconds whether there is an update to the `transaction`

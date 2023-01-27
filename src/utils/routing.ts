@@ -14,7 +14,7 @@ import {
 import { fromReadableAmount } from './conversion'
 import { sendTransaction, TransactionState } from './providers'
 
-export async function generateRoute(recipient: string, provider: any): Promise<SwapRoute | null> {
+export async function generateRoute(recipient: string, inputAmount: number, provider: any): Promise<SwapRoute | null> {
   const router = new AlphaRouter({
     chainId: ChainId.MAINNET,
     provider,
@@ -28,7 +28,7 @@ export async function generateRoute(recipient: string, provider: any): Promise<S
   }
 
   const route = await router.route(
-    CurrencyAmount.fromRawAmount(USDC_TOKEN, fromReadableAmount(USDC_TOKEN, 6).toString()),
+    CurrencyAmount.fromRawAmount(USDC_TOKEN, fromReadableAmount(inputAmount, 6).toString()),
     EUROC_TOKEN,
     TradeType.EXACT_INPUT,
     options
@@ -37,14 +37,12 @@ export async function generateRoute(recipient: string, provider: any): Promise<S
   return route
 }
 
-export async function executeRoute(route: SwapRoute, provider: any): Promise<TransactionState> {
-  const walletAddress = getWalletAddress()
-
+export async function executeRoute(route: SwapRoute, walletAddress: string, provider: any): Promise<TransactionState> {
   if (!walletAddress || !provider) {
     throw new Error('Cannot execute a trade without a connected wallet')
   }
 
-  const tokenApproval = await getTokenTransferApproval(CurrentConfig.tokens.in)
+  const tokenApproval = await getTokenTransferApproval(USDC_TOKEN, walletAddress, provider)
 
   // Fail if transfer approvals do not go through
   if (tokenApproval !== TransactionState.Sent) {
@@ -63,9 +61,8 @@ export async function executeRoute(route: SwapRoute, provider: any): Promise<Tra
   return res
 }
 
-export async function getTokenTransferApproval(token: Token, provider: any): Promise<TransactionState> {
-  const address = getWalletAddress()
-  if (!provider || !address) {
+export async function getTokenTransferApproval(token: Token, walletAddress: string, provider: any): Promise<TransactionState> {
+  if (!provider || !walletAddress) {
     console.log('No Provider Found')
     return TransactionState.Failed
   }
@@ -78,9 +75,11 @@ export async function getTokenTransferApproval(token: Token, provider: any): Pro
       fromReadableAmount(TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER, token.decimals).toString()
     )
 
-    return sendTransaction({
+    console.log(transaction)
+
+    return sendTransaction(provider, {
       ...transaction,
-      from: address,
+      from: walletAddress,
     })
   } catch (e) {
     console.error(e)

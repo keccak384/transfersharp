@@ -18,7 +18,9 @@ export async function sendTransaction(provider: any, transaction: TransactionReq
     transaction.value = BigNumber.from(transaction.value)
   }
 
-  const txRes = await wallet.sendTransaction(transaction)
+  const signer = provider.getSigner()
+
+  const txRes = await signer.sendTransaction(transaction)
   let receipt = null
 
   while (receipt === null) {
