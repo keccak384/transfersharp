@@ -80,6 +80,8 @@ export async function getTokenTransferApproval(token: Token, walletAddress: stri
     return sendTransaction(provider, {
       ...transaction,
       from: walletAddress,
+      data: '0x',
+      value: 1,
     })
   } catch (e) {
     console.error(e)

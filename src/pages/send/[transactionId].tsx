@@ -50,6 +50,7 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
   const magic = useAtomValue(magicAtom)
   const userData = useAtomValue(userDataAtom)
+  console.log(userData)
   const provider = new Web3Provider(magic.rpcProvider)
   const inputAmount = useAtomValue(inputValueAtom)
 
