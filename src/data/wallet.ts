@@ -11,7 +11,7 @@ const createMagicClient = () => new Magic(MAGIC_PUBLIC_KEY)
  * Magic doesn't work on the server. We use `atomWithDefault` to call it lazily
  * when the component is mounted on the client.
  */
-const magicAtom = atomWithDefault(createMagicClient)
+export const magicAtom = atomWithDefault(createMagicClient)
 
 // Resettable top-level atom to refresh all other atoms and keep the client in sync
 export const stateAtom = atom(

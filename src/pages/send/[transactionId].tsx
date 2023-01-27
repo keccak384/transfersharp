@@ -20,8 +20,8 @@ import {
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
-import { quoteAtom } from '@/data/swap'
-import { userDataAtom, web3Atom } from '@/data/wallet'
+import { inputValueAtom, quoteAtom } from '@/data/swap'
+import { magicAtom, userDataAtom, web3Atom } from '@/data/wallet'
 import {
   AuthorizedTransaction,
   BaseTransaction,
@@ -30,6 +30,7 @@ import {
   isCompletedTransaction,
   Transaction,
 } from '@/db/transactions'
+import { executeRoute, generateRoute } from '@/utils/routing'
 
 import { useFetch } from '../util'
 
