@@ -413,24 +413,24 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@magic-sdk/commons@^8.0.0":
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/@magic-sdk/commons/-/commons-8.0.0.tgz#9d0d27a2c73772f9e4ddcf2dec03f9471733135e"
-  integrity sha512-e6YfjDjHSzmBJAt1PotvXf00XxUjpr0M3FX4fF/ZcOqB4RtxElO6Tzk2HliHMQGdQoI0UkMwV2H8Wc4W81Mx2A==
+"@magic-sdk/commons@^9.1.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/commons/-/commons-9.1.0.tgz#06602d618457cf7573d58aceb02809d56172083d"
+  integrity sha512-hKos9Q1NaAWT8Sm0vKjsrOuKtAXNnLHx7RtLfgGE7MiNxrhw/em+zvnerbWuekUVe1MDcNAIeJU6aGMxOunknw==
 
-"@magic-sdk/provider@^12.0.0":
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/@magic-sdk/provider/-/provider-12.0.0.tgz#3b086fceb0472c6b53e556c13f189bc2642cb1b6"
-  integrity sha512-UYBInOhGWCT12hYnzMW0e2pYaFEJ7qAmPbcZlSNuUqV6Mbb/nHgo07IlBi1kNBY8XT2nqahRc2R4doimErgJIg==
+"@magic-sdk/provider@^13.1.0":
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/provider/-/provider-13.1.0.tgz#e9e1c64498ad634aa92f24d2900746ca942c7a88"
+  integrity sha512-WTTY1ygrLlNvxMN0UyhDS4ldyMYbpEXwKEYJRuqcp0FTBNKXFf26D9M2744HiY6cT98nnvhXe4pUafIn7wUBeg==
   dependencies:
-    "@magic-sdk/types" "^10.0.0"
+    "@magic-sdk/types" "^11.1.0"
     eventemitter3 "^4.0.4"
     web3-core "1.5.2"
 
-"@magic-sdk/types@^10.0.0":
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-10.0.1.tgz#59b683670587634bdbc3d632fced4d5fda7c35a4"
-  integrity sha512-JNB+sEKdVDZd2MDs4QaPM6vxCNfGuYhWUd14rDLixcbdut2u9g5z6yDxs1rYWYEVaUknNs+zGp2K/NDPo9UfdA==
+"@magic-sdk/types@^11.1.0":
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-11.1.0.tgz#43bcd666088b5d2294b0ce3663c7798e417e9277"
+  integrity sha512-Cj3tpOO50yuBMqg39DumYF7qIKakQWIE4aGL3y8XeFeV7+fqrWmD8jlNZi5Kib4bsLvWCjxPJqtnhCyYpHnC5w==
 
 "@next/env@13.1.5":
   version "13.1.5"
@@ -2982,14 +2982,14 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-magic-sdk@^12.0.0:
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/magic-sdk/-/magic-sdk-12.0.0.tgz#269989c45f845b58883be4df54aa551a5996ccd1"
-  integrity sha512-bxJlmbL0LZcM3Z1j+jB24eZQ2hpmuS9owW1hg9UZ8R43R4U0FqxxiHkrNMsnvp+NZdhYfrpIXPCI+LwcpJnXeg==
+magic-sdk@^13.1.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/magic-sdk/-/magic-sdk-13.1.0.tgz#7f8e62b6be2e4fc7166a275f0ae7d13d970d5d1d"
+  integrity sha512-m07+ybFJmdaT4HHoqVErXw2y/e5/4lu4EGo6F7vJMGIVX8L1zIIk49at+wxtmrGnDIT52yiNftadc1WgAgFWpg==
   dependencies:
-    "@magic-sdk/commons" "^8.0.0"
-    "@magic-sdk/provider" "^12.0.0"
-    "@magic-sdk/types" "^10.0.0"
+    "@magic-sdk/commons" "^9.1.0"
+    "@magic-sdk/provider" "^13.1.0"
+    "@magic-sdk/types" "^11.1.0"
     localforage "^1.7.4"
 
 md5.js@^1.3.4:
