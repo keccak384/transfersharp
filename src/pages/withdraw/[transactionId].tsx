@@ -76,7 +76,7 @@ const Received = styled('div', {
   flexDirection: 'column',
 })
 
-export default function Withdraw({ transaction }: { transaction: CompletedTransaction }) {
+function Withdraw({ transaction }: { transaction: CompletedTransaction }) {
   return (
     <PageWrapper>
       <ReceiveWrapper>
