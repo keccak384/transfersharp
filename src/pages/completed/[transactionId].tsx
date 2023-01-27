@@ -84,7 +84,7 @@ function Completed({ transaction }: { transaction: CompletedTransaction }) {
           <FlexColumn>
             <Received>
               <SmallText>You just sent</SmallText>
-              <BigText>€{transaction.buyAmount}</BigText>
+              <BigText>€{transaction.sellAmount}</BigText>
             </Received>
             <FlexRowFixed>
               <Image src="/EUR.png" alt="13" width={20} height={20} priority />
