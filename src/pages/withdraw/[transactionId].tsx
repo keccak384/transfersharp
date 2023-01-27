@@ -84,7 +84,7 @@ function Withdraw({ transaction }: { transaction: CompletedTransaction }) {
           <FlexColumn>
             <Received>
               <SmallText>You just received</SmallText>
-              <BigText>€920</BigText>
+              <BigText>€{transaction.buyAmount}</BigText>
             </Received>
             <FlexRowFixed>
               <Image src="/EUR.png" alt="13" width={20} height={20} priority />
