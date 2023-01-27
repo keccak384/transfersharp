@@ -39,7 +39,7 @@ export async function getServerSideProps({ params: { transactionId } }: { params
   if (transaction.hash) {
     return {
       redirect: {
-        destination: `/withdraw/${transaction.id}`,
+        destination: `/completed/${transaction.id}`,
         permanent: false,
       },
     }
