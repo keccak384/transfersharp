@@ -1,3 +1,4 @@
+import { Web3Provider } from '@ethersproject/providers'
 import * as Label from '@radix-ui/react-label'
 import { useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
