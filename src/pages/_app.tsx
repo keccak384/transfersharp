@@ -32,6 +32,30 @@ const Header = styled('header', {
   padding: '24px',
 })
 
+const AccountDetails = styled('div', {
+  height: '64px',
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+const erc20abi = [
+  {
+    constant: true,
+    inputs: [{ name: '_owner', type: 'address' }],
+    name: 'balanceOf',
+    outputs: [{ name: 'balance', type: 'uint256' }],
+    type: 'function',
+  },
+  // decimals
+  {
+    constant: true,
+    inputs: [],
+    name: 'decimals',
+    outputs: [{ name: '', type: 'uint8' }],
+    type: 'function',
+  },
+]
+
 function App({ Component, pageProps }: AppProps) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const magic = useAtomValue(stateAtom)
@@ -95,24 +119,26 @@ function App({ Component, pageProps }: AppProps) {
           <Image src="/logo.svg" alt="13" width={148} height={50} priority />
         </Link>
         {isLoggedIn ? (
-          <FlexRowFixed>
-            <FlexColumn>
-              <a
-                href="#"
-                onClick={async () => {
-                  await magic.user.logout()
-                  refreshState()
-                }}
-              >
-                Log out
-              </a>
-              <SmallText css={{ color: '$gray12' }}>{number}</SmallText>
-              <SmallText css={{ color: '$gray8' }}>{address}</SmallText>
-              <SmallText css={{ color: '$gray8' }}>{ETHbalance} ETH</SmallText>
-              <SmallText css={{ color: '$gray8' }}>{USDbalance} USDC</SmallText>
-              <SmallText css={{ color: '$gray8' }}>{EURbalance} EUROC</SmallText>
-            </FlexColumn>
-          </FlexRowFixed>
+          <AccountDetails>
+            <FlexRowFixed>
+              <FlexColumn>
+                <a
+                  href="#"
+                  onClick={async () => {
+                    await magic.user.logout()
+                    refreshState()
+                  }}
+                >
+                  Log out
+                </a>
+                <SmallText css={{ color: '$gray8' }}>{number}</SmallText>
+                <SmallText css={{ color: '$gray8' }}>{address}</SmallText>
+                <SmallText css={{ color: '$gray8' }}>{ETHbalance} ETH</SmallText>
+                <SmallText css={{ color: '$gray8' }}>{USDbalance} USDC</SmallText>
+                <SmallText css={{ color: '$gray8' }}>{EURbalance} EUROC</SmallText>
+              </FlexColumn>
+            </FlexRowFixed>
+          </AccountDetails>
         ) : (
           <>
             <a href="#" onClick={() => setIsLoginModalOpen(true)}>
