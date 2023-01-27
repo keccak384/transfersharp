@@ -144,8 +144,6 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
     return () => clearInterval(id)
   }, [router, didReceiverAccept])
 
-  const userData = useAtomValue(userDataAtom)
-
   const isPending = isPendingTransaction || isPendingFetch
 
   const footer = (() => {
