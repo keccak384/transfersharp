@@ -69,6 +69,13 @@ export const FlexRow = styled('div', {
   gap: '$2',
 })
 
+export const FlexColumn = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-end',
+  gap: '$2',
+})
+
 export const FlexRowFixed = styled(FlexRow, {
   justifyContent: 'flex-start',
   alignItems: 'center',
