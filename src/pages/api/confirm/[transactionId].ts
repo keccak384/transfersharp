@@ -30,11 +30,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const url = `https://${req.headers.host}/withdraw/${transaction.id}`
 
-  await client.messages.create({
-    from: TWILIO_PHONE,
-    to: completedTransaction.toPhoneNumber,
-    body: `Hey, ${completedTransaction.fromPhoneNumber} just sent you some money! Go to ${url} to withdraw!`,
-  })
+  // In case we run out of quota, silently ignore failed messages. This is not production-ready.
+  try {
+    await client.messages.create({
+      from: TWILIO_PHONE,
+      to: completedTransaction.toPhoneNumber,
+      body: `Hey, ${completedTransaction.fromPhoneNumber} just sent you some money! Go to ${url} to withdraw!`,
+    })
+  } catch (e) {
+    console.log(e)
+  }
 
   res.status(200).json(completedTransaction)
 }

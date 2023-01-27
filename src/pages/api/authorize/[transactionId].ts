@@ -21,11 +21,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const url = `https://${req.headers.host}/send/${authorizedTransaction.id}`
 
-  await client.messages.create({
-    from: TWILIO_PHONE,
-    to: authorizedTransaction.fromPhoneNumber,
-    body: `Hey, ${authorizedTransaction.toPhoneNumber} accepted your invite! Go to ${url} to continue the transaction!`,
-  })
+  // In case we run out of quota, silently ignore failed messages. This is not production-ready.
+  try {
+    await client.messages.create({
+      from: TWILIO_PHONE,
+      to: authorizedTransaction.fromPhoneNumber,
+      body: `Hey, ${authorizedTransaction.toPhoneNumber} accepted your invite! Go to ${url} to continue the transaction!`,
+    })
+  } catch (e) {
+    console.log(e)
+  }
 
   res.status(200).json(authorizedTransaction)
 }
