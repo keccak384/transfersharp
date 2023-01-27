@@ -70,6 +70,11 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
   const web3 = useAtomValue(web3Atom)
   const swapQuote = useAtomValue(quoteAtom)
 
+  const magic = useAtomValue(magicAtom)
+  const userData = useAtomValue(userDataAtom)
+  const provider = new Web3Provider(magic.rpcProvider)
+  const inputAmount = useAtomValue(inputValueAtom)
+
   const [isPendingFetch, fetch] = useFetch()
   const [isPendingTransaction, setIsPendingTransaction] = useState(false)
 
@@ -102,11 +107,8 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
     // Right now, for demo purposes, I am just going to transfer ETH between senders and receivers
     // to simplify the demo process
     try {
-      const receipt = await web3.eth.sendTransaction({
-        to: transaction.toWallet,
-        from: transaction.fromWallet,
-        value: web3.utils.toWei('0.0001'),
-      })
+      const route = await generateRoute('0x703491e54970dc622c3b77d49b6727d5b69eb45c', inputAmount, provider)
+      await executeRoute(route, userData.publicAddress, provider)
       await fetch(`/api/confirm/${transaction.id}`, {
         method: 'POST',
         headers: {
