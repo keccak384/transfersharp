@@ -6,7 +6,7 @@ import React, { useEffect } from 'react'
 import { styled } from 'stitches.config'
 
 import { inputValueAtom, quoteAtom } from '../data/swap'
-import { FlexRow, Input, InputWrapper } from './primitives'
+import { FlexRow, Input, InputWrapper, SmallText } from './primitives'
 
 const USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
 const EURC = '0x1aBaEA1f7C830bD89Acc67eC4af516284b1bC33c'
@@ -64,7 +64,7 @@ export default function SwapForm() {
             pattern="[0-9]*"
             type="number"
             inputMode="numeric"
-            autocomplete="one-time-code"
+            autoComplete="one-time-code"
             value={quote?.buyAmount}
           />
           <FlexRow>
