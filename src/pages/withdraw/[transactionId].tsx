@@ -90,6 +90,11 @@ function Withdraw({ transaction }: { transaction: CompletedTransaction }) {
               <Image src="/EUR.png" alt="13" width={20} height={20} priority />
               <MediumText>EURO</MediumText>
             </FlexRowFixed>
+            <SmallText>
+              <a href={`https://etherscan.io/tx/${transaction.hash}`} target="_blank" rel="noopener noreferrer">
+                View transaction
+              </a>
+            </SmallText>
           </FlexColumn>
         </InviteWrapper>
         <Button
