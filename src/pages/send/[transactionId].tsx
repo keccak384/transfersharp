@@ -21,7 +21,7 @@ import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom, phoneNumberAtom } from '@/data/modal'
 import { quoteAtom } from '@/data/swap'
-import { isLoggedInAtom, web3Atom } from '@/data/wallet'
+import { userDataAtom, web3Atom } from '@/data/wallet'
 import {
   AuthorizedTransaction,
   BaseTransaction,
@@ -63,7 +63,6 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
   const didReceiverAccept = isAuthorizedTransaction(transaction)
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
-  const isLoggedIn = useAtomValue(isLoggedInAtom)
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
   const setLoginModalPhoneNumber = useSetAtom(phoneNumberAtom)
 
@@ -134,9 +133,36 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
     return () => clearInterval(id)
   }, [router, didReceiverAccept])
 
+  const userData = useAtomValue(userDataAtom)
+
+  const footer = (() => {
+    switch (true) {
+      case userData && userData.phoneNumber === transaction.fromPhoneNumber:
+        return <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
+      case !userData: {
+        return (
+          <Button
+            onClick={(e) => {
+              e.preventDefault()
+              setLoginModalPhoneNumber(transaction.toPhoneNumber)
+              setIsLoginModalOpen(true)
+            }}
+          >
+            Sign in to continue
+          </Button>
+        )
+      }
+    }
+  })()
+
   return (
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
+        {userData && userData.phoneNumber !== transaction.fromPhoneNumber && (
+          <InvitePendingMessage style={{ marginBottom: 10 }}>
+            You can only approve this transaction if you are signed in with the phone number that was invited.
+          </InvitePendingMessage>
+        )}
         <SwapForm />
         <InputWrapper>
           <Label.Root htmlFor="toPhoneNumber">To</Label.Root>
@@ -161,19 +187,7 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
           )}
         </InputWrapper>
         <TransactionDetails />
-        {isLoggedIn ? (
-          <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
-        ) : (
-          <Button
-            onClick={(e) => {
-              e.preventDefault()
-              setLoginModalPhoneNumber(transaction.toPhoneNumber)
-              setIsLoginModalOpen(true)
-            }}
-          >
-            Sign in to continue
-          </Button>
-        )}
+        {footer}
       </StyledSendForm>
     </PageWrapper>
   )
