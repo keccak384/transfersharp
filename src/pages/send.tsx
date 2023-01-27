@@ -21,6 +21,8 @@ import { loginModalAtom } from '@/data/modal'
 import { isLoggedInAtom, userDataAtom } from '@/data/wallet'
 import type { Transaction } from '@/db/transactions'
 
+import { useFetch } from './util'
+
 function LoginButton({ handleLogin }: { handleLogin: () => void }) {
   const isLoggedIn = useAtomValue(isLoggedInAtom)
 
@@ -43,6 +45,8 @@ function SendForm() {
   const userData = useAtomValue(userDataAtom)
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
   const router = useRouter()
+
+  const [isPendingFetch, fetch] = useFetch()
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -94,7 +98,9 @@ function SendForm() {
             <SmallText>
               {`You can send to any phone number. We'll text them an invite to join to receive the funds.`}
             </SmallText>
-            {isValidPhoneNumber && <InviteButton>Invite via SMS</InviteButton>}
+            {isValidPhoneNumber && (
+              <InviteButton disabled={isPendingFetch}>{isPendingFetch ? 'Inviting...' : 'Invite via SMS'}</InviteButton>
+            )}
           </InputWrapper>
         )}
         <TransactionDetails />

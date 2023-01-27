@@ -31,6 +31,8 @@ import {
   Transaction,
 } from '@/db/transactions'
 
+import { useFetch } from '../util'
+
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
   const transaction = await getTransactionById(transactionId)
 
@@ -68,6 +70,8 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
 
   const web3 = useAtomValue(web3Atom)
   const swapQuote = useAtomValue(quoteAtom)
+
+  const [isPendingFetch, fetch] = useFetch()
 
   const handleSend = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -138,7 +142,11 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
   const footer = (() => {
     switch (true) {
       case userData && userData.phoneNumber === transaction.fromPhoneNumber:
-        return <ButtonComponent disabled={ButtonComponent === PendingButton}>Send</ButtonComponent>
+        return (
+          <ButtonComponent disabled={ButtonComponent === PendingButton || isPendingFetch}>
+            {isPendingFetch ? 'Sending...' : 'Send'}
+          </ButtonComponent>
+        )
       case !userData: {
         return (
           <Button
