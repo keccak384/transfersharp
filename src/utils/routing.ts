@@ -10,7 +10,7 @@ import {
   V3_SWAP_ROUTER_ADDRESS,
 } from './constants'
 import { fromReadableAmount } from './conversion'
-import { getProvider, getWalletAddress, sendTransaction, TransactionState } from './providers'
+import { sendTransaction, TransactionState } from './providers'
 
 export async function generateRoute(): Promise<SwapRoute | null> {
   const router = new AlphaRouter({
@@ -40,7 +40,6 @@ export async function generateRoute(): Promise<SwapRoute | null> {
 
 export async function executeRoute(route: SwapRoute): Promise<TransactionState> {
   const walletAddress = getWalletAddress()
-  const provider = getProvider()
 
   if (!walletAddress || !provider) {
     throw new Error('Cannot execute a trade without a connected wallet')
@@ -66,7 +65,6 @@ export async function executeRoute(route: SwapRoute): Promise<TransactionState> 
 }
 
 export async function getTokenTransferApproval(token: Token): Promise<TransactionState> {
-  const provider = getProvider()
   const address = getWalletAddress()
   if (!provider || !address) {
     console.log('No Provider Found')
