@@ -10,6 +10,7 @@ import {
   Input,
   InputWrapper,
   InvitePendingMessage,
+  InvitePendingMessageWarning,
   PageWrapper,
   PendingButton,
   PendingText,
@@ -159,9 +160,9 @@ function SendTransaction({ transaction }: { transaction: BaseTransaction | Autho
     <PageWrapper>
       <StyledSendForm onSubmit={handleSend}>
         {userData && userData.phoneNumber !== transaction.fromPhoneNumber && (
-          <InvitePendingMessage style={{ marginBottom: 10 }}>
-            You can only approve this transaction if you are signed in with the phone number that was invited.
-          </InvitePendingMessage>
+          <InvitePendingMessageWarning style={{ marginBottom: 10 }}>
+            You can only send this transaction if you are logged in with the phone number created it.
+          </InvitePendingMessageWarning>
         )}
         <SwapForm />
         <InputWrapper>

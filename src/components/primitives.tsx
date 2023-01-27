@@ -105,8 +105,8 @@ export const PageWrapper = styled('div', {
   flexDirection: 'column',
   justifyContent: 'center',
   alignSelf: 'center',
+  alignItems: 'center',
   margin: 'auto',
-  marginTop: '0px',
   backgroundColor: 'white',
   color: 'black',
   gap: '24px',
@@ -146,4 +146,9 @@ export const InvitePendingMessage = styled('p', {
   backgroundColor: '$blue2',
   color: '$blue10',
   borderRadius: '24px',
+})
+
+export const InvitePendingMessageWarning = styled(InvitePendingMessage, {
+  backgroundColor: '$red2',
+  color: '$red10',
 })

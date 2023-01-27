@@ -11,6 +11,7 @@ import {
   Button,
   FlexRowFixed,
   InvitePendingMessage,
+  InvitePendingMessageWarning,
   PageWrapper,
   PendingText,
   SmallText,
@@ -141,12 +142,13 @@ function ReceiveTransaction({ transaction }: { transaction: BaseTransaction | Au
       case userData && userData.phoneNumber !== transaction.toPhoneNumber: {
         return (
           <>
-            <InvitePendingMessage>
-              You can only approve this transaction if you are signed in with the phone number that was invited.
-            </InvitePendingMessage>
+            <InvitePendingMessageWarning>
+              You can only accept this transfer if you are signed in with the phone number that was invited.
+            </InvitePendingMessageWarning>
             <Button
               as="a"
               href="#"
+              css={{ backgroundColor: '$red10' }}
               onClick={async () => {
                 await magic.user.logout()
                 refreshState()
