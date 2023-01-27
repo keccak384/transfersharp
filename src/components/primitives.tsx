@@ -101,6 +101,7 @@ export const Spinner = styled('span', {
 
 export const PageWrapper = styled('div', {
   display: 'flex',
+  width: '100%',
   flexDirection: 'column',
   justifyContent: 'center',
   alignSelf: 'center',
