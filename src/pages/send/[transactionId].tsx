@@ -1,7 +1,9 @@
+import { Contract } from '@ethersproject/contracts'
+import { Web3Provider } from '@ethersproject/providers'
 import * as Label from '@radix-ui/react-label'
-import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
+import { CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core'
 import { FeeAmount, Pool, Route, SwapOptions, SwapRouter, Trade } from '@uniswap/v3-sdk'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { Suspense, useEffect } from 'react'
@@ -22,7 +24,8 @@ import {
 import SwapForm from '@/components/SwapForm'
 import TransactionDetails from '@/components/TransactionDetails'
 import { loginModalAtom } from '@/data/modal'
-import { isLoggedInAtom, stateAtom } from '@/data/wallet'
+import { inputValueAtom, outputValueAtom } from '@/data/swap'
+import { isLoggedInAtom, stateAtom, userDataAtom } from '@/data/wallet'
 import { getTransactionById, Transaction } from '@/db/transactions'
 
 export async function getServerSideProps({ params: { transactionId } }: { params: { transactionId: string } }) {
@@ -57,16 +60,35 @@ const EUROC_MAINNET = new Token(MAINNET_CHAIN_ID, '0x1aBaEA1f7C830bD89Acc67eC4af
 
 const SWAP_ROUTER_ADDRESS = '0xE592427A0AEce92De3Edee1F18E0157C05861564'
 
+const ERC20_ABI = [
+  // Read-Only Functions
+  'function balanceOf(address owner) view returns (uint256)',
+  'function decimals() view returns (uint8)',
+  'function symbol() view returns (string)',
+
+  // Authenticated Functions
+  'function transfer(address to, uint amount) returns (bool)',
+  'function approve(address _spender, uint256 _value) returns (bool)',
+
+  // Events
+  'event Transfer(address indexed from, address indexed to, uint amount)',
+]
+
 function SendTransaction({ transaction }: { transaction: Transaction }) {
   const didReceiverAccept = !!transaction.toWallet
   const ButtonComponent = didReceiverAccept ? Button : PendingButton
 
+  const userData = useAtomValue(userDataAtom)
   const isLoggedIn = useAtomValue(isLoggedInAtom)
   const magic = useAtomValue(stateAtom)
 
   const setIsLoginModalOpen = useSetAtom(loginModalAtom)
 
-  const handleSend = async () => {
+  const [inputValue] = useAtom(inputValueAtom)
+  const [outputValue] = useAtom(outputValueAtom)
+
+  const handleSend = async (e) => {
+    e.preventDefault()
     fetchQuote(inputValue).then(async (res) => {
       const json = await res.json()
       const pool = new Pool(
@@ -97,15 +119,26 @@ function SendTransaction({ transaction }: { transaction: Transaction }) {
 
       const methodParameters = SwapRouter.swapCallParameters([uncheckedTrade], options)
 
-      const tx = {
+      const swapTxPayload = {
         data: methodParameters.calldata,
         to: SWAP_ROUTER_ADDRESS,
         value: methodParameters.value,
-        from: walletAddress,
+        from: userData.publicAddress,
       }
 
-      const provider = new ethers.providers.Web3Provider(magic.rpcProvider)
-      provider.sendTransaction(tx)
+      const provider = new Web3Provider(magic.rpcProvider)
+      const signer = provider.getSigner()
+
+      const tokenContract = new Contract(USDC_MAINNET.address, ERC20_ABI, provider)
+      const approveTxPayload = await tokenContract.populateTransaction.approve(SWAP_ROUTER_ADDRESS, 20000000)
+      console.log(approveTxPayload)
+      const approveTx = await signer.sendTransaction({ ...approveTxPayload, from: userData.publicAddress, value: '0x0' })
+      console.log('between')
+      const approveReceipt = await approveTx.wait()
+      console.log9('here after approve')
+      const swapTx = await signer.sendTransaction(swapTxPayload)
+      const swapReceipt = await swapTx.wait()
+      const balance = await tokenContract.balanceOf(userData.publicAddress)
     })
   }
 
